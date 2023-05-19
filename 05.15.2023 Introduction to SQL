@@ -1,0 +1,195 @@
+--2. Session 05.15.2023 Introduction to SQL
+
+--CONSTRAINT IN SQL: Limitations, rules for your data creation
+
+--1)Primary Key:
+--It is for making record unique. 
+--It does not accept "null" as value.
+--It does not accept "repeated data", all data in primary key field must be unique.
+--A table can have just a single "primary key" field.
+		--Field Name	Data Type	Constrait
+		--patient_ID	VARCHAR		Primary Key
+
+
+--2)Foreign Key:
+--It is for creating relationships between tables. 
+--It accepts "null" as value.
+--It accepts "repeated data".
+--A table can have multiple "foreign key" fields.
+
+
+--3)Unique Key:
+--It is for making data in a field "unique".  
+--When you insert the data in a "Unique Key Field", Postgre will check if it is matching with this constraint or not
+--If there is repeated data Postgre will give error.
+--When we update a data in a "Unique Key" field, Postgre will check if it is matching with the existing ones.
+--"Unique Key" field can have multiple "null" values
+--		email_address	VARCHAR	UNIQUE
+
+
+
+--4)Check: (it is not key, it is rule)
+--It checks conditions we put for the data inserted.It is created for to check some values, for example age value greater than 18.
+--		age_of_students	   NUMERIC/INTEGER	  Check(age_of_student>0)
+
+
+
+--5)NOT NULL:It tells to PostGre, do not accept "null" values in the field.
+--To make field "Required field" we use "Not null" constraint
+
+
+
+--********************************************************
+
+
+--DATA TYPES IN POSTGRESQL
+--1)BOOLEAN:It has 3 values i)True ii)Values  iii)null
+--Boolean can be used as "BOOL" as well
+--   is_retired	 BOOLEAN or is_retired BOOL
+
+
+--2)CHAR:iT IS FOR USING "fixed" lenghts
+-- char(n) does not accept more than "n" characters
+--CHAR(n) accepts "n" and less then "n" characters
+--CHAR-->CHAR(1)  just one character
+--social_security_number	CHAR(9)
+
+
+--3)VARCHAR:It is for Strings.
+--VARCHAR and TEXT are completely same
+-- address VARCHAR OR ADDRESS text -->same for Postgre
+
+
+--4)NUMERIC: This is for storing numeric values (whole or decimal)
+--price(5,2):You can use in total 5 digits, 2 of them can be decimal -->387,45
+--price(precision,decimal)
+-- 5 ->is called precision and it displays the total number of digits in the field
+-- 2 ->is called "scale" and it displays the total numbers of digits in decimal part
+--price(5,2)-->if you use more then 5 digits in total, Postgre gives error
+--price(5,2)-->if you use more then 2 digits in total for scale part, Postgre gives error.
+--price(5,2)-->Using less than 5 in total or less than 2 in decimal part is allowed.  -->34,5
+
+--price(5,0) same price(5) -->Whole number like 12345
+--price NUMBERIC -->There is no limit for "precision" and "scale"
+
+
+--5)DATE:It is for storing date values.
+--Default date format "yyyy-mm-dd"
+--When you insert a date value, if you dont use "yyyy-mm-dd", postgre gives error.
+--date_of_birth	DATE	
+--If you want to insert current date automatically you can use
+--registration_Date	 DATE	CURRENT_DATE
+
+
+--6)TIME: It is for storing time values
+--hh:mm:ss format is the default format for the time data type
+--appoinment_time TIME
+
+
+--7)JSON: If you need to store data in key-value structure you can use JSON data type
+--fruit_prices JSON
+--apple:12, orange:21, apricot:13
+
+
+
+--********************************************************
+
+--How to create a table
+
+CREATE TABLE students(
+
+	student_id CHAR(5) PRIMARY KEY,
+	student_name VARCHAR,
+	email_address VARCHAR NOT NULL,
+	student_age NUMERIC(2) CHECK(student_age>0),
+	phone_number CHAR(10) UNIQUE
+	
+)
+
+
+--How to see a table
+SELECT * FROM students;
+
+
+--How to insert data in the table
+INSERT INTO students VALUES('11111', 'Tom Hanks', 'th@gmail.com', 15, '1234567890');
+INSERT INTO students VALUES('11112', 'Brad Pit', 'bp@gmail.com', 22, '1234567785');
+--INSERT INTO students VALUES('113', 'Tom Hanks', null, 13, '1234567787');
+--null value in column "email_address" of relation "students" violates not-null constraint
+INSERT INTO students VALUES('113', 'Tom Hanks', 'th@gmail.com', 13, '1234567787');
+
+
+--How can we insert data into specific fields
+INSERT INTO students(student_id, email_address, phone_number) VALUES ('11114', 'abc@gmail.com', '1278567787' );
+INSERT INTO students(email_address, phone_number, student_id) VALUES ('xyz@gmail.com', '1278567713','11115'  );
+
+
+--How to delete a table?
+DROP TABLE students;
+
+
+--How to update existing data in a table
+--Example 1:Update student is ad '11113' where it is '113'
+UPDATE students
+SET student_id='11113'
+WHERE student_id='113';
+
+
+--Example 2:Change Tom Hanks to Anthony Quinn
+UPDATE students
+SET student_name='Anthony Quinn'
+WHERE student_name='Tom Hanks';
+
+
+
+--Example 3:Change bp@gmail.com to abc@gmail.com
+UPDATE students
+SET email_address='abc@gmail.com'				
+WHERE email_address='bp@gmail.com';
+
+
+
+--What is the max age table in this page?
+SELECT MAX (student_age) from students;
+
+
+--Example 4:Update all students ages to the maximum age
+UPDATE students
+SET student_age=(SELECT MAX (student_age) from students);
+
+SELECT * FROM students;
+
+
+
+--Example 5: Create parents table with parent_id, parent_name, student_id, parent_adress, parent_dob fields
+
+CREATE TABLE parents(
+
+	parent_id CHAR(5) PRIMARY KEY,
+	parent_name TEXT,
+	student_id CHAR(5),
+	parent_adress TEXT,
+	parent_dob DATE
+
+
+)
+
+SELECT * FROM parents;
+DROP TABLE parents;
+
+--Example 6: Insert 4 records into parent table
+
+INSERT INTO parents VALUES('21111', 'Mark Hanks', '11111', 'Miami, FL', '1994-10-23');
+INSERT INTO parents VALUES('21112', 'Angie Pitt', '11112', 'New York, USA', '1987-2-13');
+INSERT INTO parents VALUES('21113', 'John Walker', '11113', 'Berlin, Germany', '1975-12-05');
+INSERT INTO parents VALUES('21114', 'Mary Star', '11114', 'Istanbul, Turkey', '1975-10-03');
+
+
+--What is the minimum birth of day in the table?
+SELECT MIN(parent_dob) FROM parents;
+
+
+--Example 7: Change all date of births to the minimum date of birth
+UPDATE parents
+SET parent_dob=(SELECT MIN(parent_dob) FROM parents);
+
