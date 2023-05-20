@@ -1,0 +1,273 @@
+--3. Session 05.17.2023 SQL Queries
+
+--Create workers table whose fields are worker_id, worker_name, worker_salary.
+--worker_id will have primary key with the name worker_id_pk
+--Insert 4 records into the workers table
+--See the table on the console
+
+CREATE TABLE workers(
+
+		worker_id SMALLINT,
+		worker_name VARCHAR(50), 
+		worker_salary NUMERIC,
+		CONSTRAINT worker_id_pk PRIMARY KEY(worker_id)
+)
+
+--to be able to add constraint to some field we are declaring :CONSTRAINT worker_id_pk PRIMARY KEY(worker_id)
+
+INSERT INTO workers VALUES(101, 'Ali Can', 12000);
+INSERT INTO workers VALUES(102, 'Veli Han', 2000);
+INSERT INTO workers VALUES(103, 'Aisha Can', 7000);
+INSERT INTO workers VALUES(104, 'Angie Ocean', 12000);
+
+SELECT * FROM workers;
+
+
+----Increase the salary of Veli Han to 20 percent less than the highest salary 
+UPDATE workers
+SET worker_salary = (SELECT MAX(worker_salary)*0.8 FROM workers)
+WHERE worker_id = 102;
+
+
+
+--Decrease the salary of Ali Can to 30 percent more than the lowest salary
+UPDATE workers
+SET worker_salary = (SELECT MIN(worker_salary)*1.3 FROM workers)
+WHERE worker_name = 'Ali Can';
+
+
+
+--Increase the salaries by 1000 if the salaries are less then the average salary 
+--average salary:
+SELECT AVG(worker_salary) FROM workers;
+
+UPDATE workers
+SET worker_salary = worker_salary+1000
+WHERE worker_salary <(SELECT AVG(worker_salary) FROM workers);
+
+SELECT*FROM workers;
+
+
+
+--Make the salaries equal to the average salary if the salaries are less than the average salary
+--average salary: SELECT AVG(worker_salary) FROM workers;
+
+UPDATE workers
+SET worker_salary = (SELECT AVG(worker_salary) FROM workers)
+WHERE worker_salary < (SELECT AVG(worker_salary) FROM workers);
+
+DROP TABLE workers;
+
+
+
+--************************************************************************************************
+
+--Conditions, Statements, Expressions in SQL
+
+--IS NULL Condition
+
+CREATE TABLE people(
+ssn INT,
+name VARCHAR(50),
+address VARCHAR(80)     
+);
+
+
+INSERT INTO people VALUES(123456789, 'Mark Star', 'Florida');
+INSERT INTO people VALUES(234567890, 'Angie Way', 'Virginia');
+INSERT INTO people VALUES(345678901, 'Maryy Tien', 'New Jersey');
+INSERT INTO people(ssn, address) VALUES(456789012, 'Michigan');
+INSERT INTO people(ssn, address) VALUES(567890123, 'California');
+INSERT INTO people(ssn, name) VALUES(567890123, 'California');
+
+SELECT * FROM people;
+DROP TABLE people;
+
+
+--Change null names to "Name will be inserted later"
+UPDATE people
+SET name = 'Name will be inserted later'
+WHERE name IS NULL;
+
+
+--Change null addresses to "Address will be inserted later"
+UPDATE people
+SET address = 'Address will be inserted later'
+WHERE address IS NULL;
+
+
+--How to Delete record from a table
+DELETE FROM people
+WHERE ssn = 234567890;
+
+
+--Delete records which do not have name
+DELETE FROM people
+WHERE name ='Name will be inserted later';
+
+--OR  (if table has null for some names)
+DELETE FROM people
+WHERE name IS NULL;
+
+
+--Delete all records from table
+--Delete command deletes just the records, it does not destroy the table from database.
+DELETE FROM people;
+
+
+--Delete all records whose name is null or address is null
+DELETE FROM people
+WHERE name IS NULL OR address IS NULL;
+
+
+--Delete all records whose SSN is greater than 123456789 and less than 345678901
+DELETE FROM people
+WHERE ssn>123456789 AND ssn<345678901
+
+
+--Delete all records whose name is not null
+DELETE FROM people
+WHERE name IS NOT NULL;
+
+--Get all table
+SELECT * FROM people;
+
+--Delete all rows but not headings
+TRUNCATE TABLE people;
+
+--Delete the table
+DROP TABLE people;
+
+
+--TRUNCATE Command removes all records everytime
+
+--What is the difference between DELETE and TRUNCATE and DROP query?
+--The DELETE command deletes one or more existing records from the table in the database. 
+--The DROP Command drops the complete table from the database. 
+--The TRUNCATE Command deletes all the rows from the existing table, leaving the row with the column names.
+
+
+--******************************************************************************************************
+
+
+
+
+DROP TABLE workers;
+
+CREATE TABLE workers(
+  worker_id SMALLINT,
+  worker_name VARCHAR(50),
+  worker_salary NUMERIC,
+  
+  CONSTRAINT worker_id_pk PRIMARY KEY(worker_id)
+
+)
+
+INSERT INTO workers VALUES(101, 'Ali Can', 1200);
+INSERT INTO workers VALUES(102, 'Veli Han', 2000);
+INSERT INTO workers VALUES(103, 'Aisha Can', 7000);
+INSERT INTO workers VALUES(104, 'Angie Ocean', 12000);
+
+
+SELECT * FROM workers; --DQL : Data Query Language -->for reading data we use "SELECT"
+
+
+--How to get specific field from a table
+SELECT worker_name FROM workers;
+
+
+--How to get specific field from a table
+SELECT worker_name, worker_id FROM workers;
+
+
+--How to get a specific record
+SELECT * FROM workers
+WHERE worker_id=101;
+
+
+
+--Get the records whose salary is 2000 or 7000 or 12000
+--1.way : Not recommended
+SELECT * FROM workers
+WHERE worker_salary=2000 OR worker_salary=7000 OR worker_salary=12000;
+
+--2.way:
+SELECT * FROM workers
+WHERE worker_salary IN(2000,7000,12000);		--IN() is used instead of repeated 'OR'
+
+
+
+--Get the records whose salary is NOT 2000 or 7000 or 12000
+SELECT * FROM workers
+WHERE worker_salary NOT IN(2000,7000,12000);
+
+
+
+--******************************************************************************************
+
+
+--Interview Question: How to select record whose salary is second highest
+
+
+--To find the record which has the highest salary
+SELECT * FROM workers
+WHERE worker_salary=(SELECT MAX(worker_salary) FROM workers)
+
+
+--To find the records which have the highest salary
+SELECT * FROM workers
+WHERE worker_salary<(SELECT MAX(worker_salary) FROM workers)
+
+
+--Select the second highest salary
+SELECT MAX(worker_salary) AS second_highest_salary FROM workers
+WHERE worker_salary <(SELECT MAX(worker_salary) FROM workers);
+
+
+
+--Select the second lowest salary
+SELECT MIN(worker_salary) AS second_lowest_salary FROM workers
+WHERE worker_salary >(SELECT MIN(worker_salary) FROM workers);
+
+
+--******************************************************************************************
+
+
+
+--Select max salary
+--By using 'AS' (ALLIES) you can put temporary field names for your table on the console
+SELECT MAX(worker_salary) AS maximum_salary FROM workers;
+
+
+--Select minimum salary by using AS
+SELECT MIN(worker_salary) AS minimum_salary FROM workers;
+
+
+--Count the number of workers
+SELECT COUNT(worker_name) AS number_of_workers FROM workers;
+
+
+--Select average salary value by using "AS"
+SELECT AVG(worker_salary) AS average_salary FROM workers;
+
+SELECT AVG(worker_salary) FROM workers;  --if I dont write AS average_salary, avg (name) gives automatically by SQL
+
+
+--Find the sum of worker_salaries
+SELECT SUM(worker_salary) AS sum_of_worker_salaries FROM workers;
+
+
+--Aggregate Functions in PostgreSQL: MAX, MIN, SUM, COUNT, AVG
+
+
+
+
+--Interview Question: How to select records whose salary is the lowest and highest
+--1.way:
+SELECT * FROM workers
+WHERE worker_salary = (SELECT MIN(worker_salary) FROM workers) 
+OR  worker_salary = (SELECT MAX(worker_salary) FROM workers);
+
+--2.way:
+SELECT * FROM workers
+WHERE worker_salary IN ((SELECT MIN(worker_salary) FROM workers),(SELECT MAX(worker_salary) FROM workers) );
