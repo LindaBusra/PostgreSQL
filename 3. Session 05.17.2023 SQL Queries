@@ -1,4 +1,7 @@
+
+
 --3. Session 05.17.2023 SQL Queries
+
 
 --Create workers table whose fields are worker_id, worker_name, worker_salary.
 --worker_id will have primary key with the name worker_id_pk
@@ -223,11 +226,49 @@ WHERE worker_salary<(SELECT MAX(worker_salary) FROM workers)
 SELECT MAX(worker_salary) AS second_highest_salary FROM workers
 WHERE worker_salary <(SELECT MAX(worker_salary) FROM workers);
 
-
+--OR
+SELECT * FROM workers
+ORDER BY worker_salary DESC
+OFFSET 1 ROW
+LIMIT 1;		--OR  FETCH NEXT 1 ROW ONLY;
 
 --Select the second lowest salary
 SELECT MIN(worker_salary) AS second_lowest_salary FROM workers
 WHERE worker_salary >(SELECT MIN(worker_salary) FROM workers);
+
+--OR : by using ORDER BY
+SELECT * FROM workers
+ORDER BY worker_salary ASC  --AS DEFAULT IS ASC
+OFFSET 1 ROW
+LIMIT 1;		--OR  FETCH NEXT 1 ROW ONLY;
+
+
+--Select the third highest salary  
+--1.way
+SELECT MAX(worker_salary) AS third_highest_salary FROM workers
+WHERE worker_salary <   --now all part is the same with Select the second highest salary
+(SELECT MAX(worker_salary) AS second_highest_salary FROM workers
+WHERE worker_salary <(SELECT MAX(worker_salary) FROM workers));
+
+--2.way : ORDER BY -->in natural order, in ascending order
+SELECT * FROM workers
+ORDER BY worker_salary 
+OFFSET 2 ROW
+LIMIT 1;
+
+--OR
+SELECT * FROM workers
+ORDER BY worker_salary 
+OFFSET 2 ROW
+FETCH NEXT 1 ROW ONLY;
+
+
+
+--Select the third lowest salary
+SELECT MIN(worker_salary) AS third_lowest_salary FROM workers
+WHERE worker_salary> 
+(SELECT MIN(worker_salary) AS second_lowest_salary FROM workers
+WHERE worker_salary >(SELECT MIN(worker_salary) FROM workers));
 
 
 --******************************************************************************************
@@ -271,3 +312,4 @@ OR  worker_salary = (SELECT MAX(worker_salary) FROM workers);
 --2.way:
 SELECT * FROM workers
 WHERE worker_salary IN ((SELECT MIN(worker_salary) FROM workers),(SELECT MAX(worker_salary) FROM workers) );
+
