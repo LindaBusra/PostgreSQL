@@ -172,3 +172,7 @@ WHERE EXISTS (SELECT customer_name FROM customers_likes WHERE customer_name = 'N
 
 
 
+
+
+
+
