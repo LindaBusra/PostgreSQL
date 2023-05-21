@@ -1,7 +1,5 @@
 
-
 --3. Session 05.17.2023 SQL Queries
-
 
 --Create workers table whose fields are worker_id, worker_name, worker_salary.
 --worker_id will have primary key with the name worker_id_pk
