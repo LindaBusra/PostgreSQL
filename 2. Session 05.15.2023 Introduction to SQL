@@ -193,3 +193,21 @@ SELECT MIN(parent_dob) FROM parents;
 UPDATE parents
 SET parent_dob=(SELECT MIN(parent_dob) FROM parents);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
