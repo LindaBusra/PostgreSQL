@@ -1,0 +1,219 @@
+--6. Session SQL Recap Session 21.05.2023
+
+--CRUD operations
+--C stands for "Creating" data
+--R stands for "Reading" data
+--U stands for "Updating" data
+--D stands for "Deleting" data
+
+--DQL -->It is used for "READING" data --> SELECT keyword is used to read the data in DB
+
+--How to get all columns/fields from workers tables
+SELECT * FROM workers;
+
+--How to get specific fields from a table
+SELECT worker_name FROM workers;
+
+--How to get specific multiple fields from a table
+SELECT worker_name, worker_salary FROM workers;
+
+--How to get specific record
+SELECT * FROM workers
+WHERE worker_name = 'Angie Ocean';
+
+--How to get multiple specific records
+SELECT * FROM workers
+WHERE worker_id>102;
+
+--Get the records whose salary is 2000 0r 7000 or 12000
+SELECT * FROM workers
+WHERE worker_salary IN(2000,7000,12000);
+
+SELECT * FROM workers   --Not recommended
+WHERE worker_salary=2000 OR worker_salary=7000 OR worker_salary=12000;
+
+
+--********************************************************************************************************************
+
+
+
+SELECT * FROM students;
+DROP TABLE students;
+
+
+CREATE TABLE students
+(
+	id SMALLINT,
+	name VARCHAR(20),
+	address VARCHAR(100),
+	exam_grade SMALLINT,
+	registration_date DATE
+);
+
+INSERT INTO students VALUES(120, 'Ali Can', 'Ankara', 70, '11.Feb.2023');
+INSERT INTO students VALUES('121', 'Veli Han', 'Trabzon', 75, '11.02.2022');
+INSERT INTO students VALUES(122, 'Ayşe Tan', 'Bursa', 85, '11.Aug.2021');
+INSERT INTO students VALUES(123, 'Mary Star', 'İstanbul', 95, 'Jan.1.2020');
+INSERT INTO students VALUES(124, 'Terry Star', 'Ankara', 95, '1.Sep.19');
+INSERT INTO students VALUES(125, 'Herry Star', 'Antalya', 95, '1.2.18');
+INSERT INTO students VALUES(126, 'Sally Otar', 'İzmir', 100, '3.6.17');   --SQL accept the data in SQL format 2017-06-03
+
+
+SELECT * FROM students;
+
+
+--Question 1: Get all columns from students table.
+SELECT * FROM students;
+
+
+--Question 2: Get the id and name columns in the students table.
+SELECT id, name FROM students;
+
+
+--Question 3: Get all student information with a grade above 85.
+SELECT * FROM students
+WHERE exam_grade>85;
+
+
+--Question 4: Get the names of students whose address is Ankara
+SELECT name FROM students
+WHERE address = 'Ankara';
+
+
+--Question 5: Get the students whose grade is above 85 and whose address is Ankara.
+SELECT * FROM students
+WHERE exam_grade>85 AND address = 'Ankara';
+
+
+--Question 6: Get all columns of the students whose exam_grade is 95 or 70.
+--1.way
+SELECT * FROM students
+WHERE exam_grade=95 OR exam_grade=70;
+
+--2.way
+SELECT * FROM students
+WHERE exam_grade IN(70,95);
+
+
+--Question 7: Get the names of the students whose exam_grade is between 75 and 95.
+SELECT name FROM students
+WHERE exam_grade BETWEEN 75 AND 95;   --limit values are inclusive
+
+
+--Question 8: Get the addresses of students whose IDs are not between 122 and 125.
+--1.way
+SELECT address FROM students
+WHERE id NOT BETWEEN 122 AND 125;
+
+--2.way
+SELECT address FROM students
+WHERE id<122 OR id>125
+
+--3.way
+SELECT address FROM students
+WHERE NOT id>122 AND id<125;
+
+--4.way
+SELECT address FROM students
+WHERE id NOT IN(122,123,124,125);
+
+
+--Question 9: Delete the record whose address is 'Antalya'
+DELETE FROM students
+WHERE address='Antalya';
+
+SELECT * FROM students;
+
+
+
+--Question 10: Delete the lines (record/row) whose names are 'Ali Can', 'Veli Han' and 'Sally Otar'.
+DELETE FROM students
+WHERE name IN('Ali Can', 'Veli Han', 'Sally Otar');
+
+
+
+--Question 11: Delete the first and last created records
+--1.way
+DELETE FROM students
+WHERE registration_date IN(2021-08-11, 2019-09-01); --hard coding--not preferred
+
+--2.way : dynamic way
+DELETE FROM students
+WHERE registration_date IN((SELECT MIN(registration_date) FROM students), (SELECT MAX(registration_date) FROM students))
+
+
+
+--Question 12: Delete all rows whose ids are greater than 122
+DELETE FROM students
+WHERE id>122;
+
+SELECT * FROM students;
+
+
+--Delete all records
+DELETE FROM students;	--you can delete one or multiple data by using delete command and give condition
+TRUNCATE students;		--you can delete all data
+DROP TABLE students;	--destroy all table
+
+
+--Question 15: Insert data only id and address columns.
+INSERT INTO students (id, address) VALUES (127, 'Samsun');
+
+
+--Question 16: Insert data into null cells
+UPDATE students
+SET name='Larry Jones',
+	exam_grade=100,
+	registration_date='2023-02-11'
+WHERE name IS NULL;
+	
+
+--***************************************************************************************************
+
+
+
+--https://sqlbolt.com/lesson/select_queries_with_constraints_pt_2
+--In this website use ""
+
+--Find all the Toy Story movies;
+SELECT title FROM movies 
+WHERE title LIKE "Toy Story%";		--starts with Toy Story, because we have Toy Story2, Toy Story3
+
+
+
+--Find all the movies directed by John Lasseter
+SELECT*FROM Movies
+WHERE Director="John Lasseter";
+
+
+--Find all the movies (and director) not directed by John Lasseter
+SELECT title, director FROM movies 
+WHERE director != "John Lasseter";
+
+SELECT title, director FROM movies 
+WHERE director NOT LIKE "John Lasseter";
+
+
+--Find all the WALL-* movies ✓
+SELECT title FROM movies 
+WHERE title LIKE  "WALL%";
+
+
+--Exercise 4- List all directors of Pixar movies (alphabetically), without duplicates
+SELECT DISTINCT director FROM movies
+ORDER BY director;
+
+--List the last four Pixar movies released (ordered from most recent to least)
+SELECT title, year FROM movies
+ORDER BY year DESC
+LIMIT 4;
+
+--List the first five Pixar movies sorted alphabetically
+SELECT title FROM movies
+ORDER BY title
+LIMIT 5;
+
+--List the next five Pixar movies sorted alphabetically
+SELECT title FROM movies
+ORDER BY title
+LIMIT 5 OFFSET 5;
