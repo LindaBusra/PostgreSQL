@@ -1,0 +1,201 @@
+SQL:Structured Query Language
+
+SQL is a language used for interacting with Relational Data Base Management Systems (RDBMS)
+
+By using SQL we can;
+1)Create and manage databases
+2)Create and design database tables
+3)Cread, Read, Update and Delete Data (CRUD)
+4)Perform administration tasks like security, user management etc. -->DCL
+
+We can use SQL for all RDBMS (MySQL, Microsoft SQL, PostgreSQL, Oracle SQL)
+The concepts are same but implementation can be slightly different.
+
+
+
+/***************************************************************************--
+
+
+
+SQL is the communication of 4 different languages:
+
+1-Data Control Language (DCL)
+
+DCL is used to control privileges in Database. To perform any operation in the database, such as 
+for creating tables, sequences or views, a user needs privileges.
+DCL manages users, security and permissions.
+
+2-Data Definition Language (DDL)
+Data deals with descriptions of the database schema (tables, columns, rows) and is used to create
+and modify the structure of database objects.
+
+3-Data Manipulation Language (DML) -->For Create, Update, Delete
+DML deals with the manipulation of data present in the database. For eksempel insert, update and delete table.
+
+4-Data Query Language (DQL) --> is for Read
+DQL is used to query the database for information
+DQL is used to get information that is already stored in database
+
+
+***************************************************************************************************--
+SQL Data Types : String, Numeric, Date (2022-11-29), Blop (Binary Large Objects)
+
+String: 
+char(size)-->in fixed length : Maximum size of 2000 bytes.  1 character uses 1 byte.  char(10), char(2)
+varchar(size)-->variable length string. Maximum size of 4000 bytes.  1 character uses 1 byte.
+For memory usage it is important to use the right one.
+
+Blop: is good to store digitized infromation like images, audios, voice recording and videos
+
+
+***************************************************************************************************--
+
+
+Primary Key:
+1-Only one Primary Key is allowed to use in a table
+2-Primary Key does not accept NULL values
+3-Primary key does not allow dublication
+4-A Primary Key of one table can be referenced by the foreign key of another table.
+5-Primary Key is in parent table  (Foreign key is in child table)
+
+Unique Key:
+1-A table can have more than one unique key.
+2-Unique key can accept NULL values for column.
+3-Unique key also does not allow dublication except null
+4-Uniques Key are also referenced by the foreign key of another table.
+ 
+We can put repeated data in foreign key.
+
+
+Relationships in the tables:
+1-One to one relationship
+2-One to many relationship
+3-Many to many relationship
+
+NoSQL database-->MongoDB (the most popular one)
+
+*/
+
+
+
+
+
+------------------------------------1.bolum/day01.sql--------------------------------------------------
+
+create database test;
+-- create database: database olustururuz
+
+
+-- use test; birden fazla database var ise "use" komutu ile calisacagimiz database'i seceriz
+
+
+drop table ogrenciler -- tabloyu siler
+delete from ogrenciler;--tablodaki tum verileri siler 
+
+
+-- TABLO OLUSTURMA
+create table student
+(
+id varchar(4) PRIMARY KEY,
+name varchar(30) NOT NULL,
+age int, check(age>12)  --kural koyulabilir
+);
+
+--degiskenlere NOT NULL, PRIMARY KEY, CHECK, UNIQUE gibi ozellikler atabanabilir
+
+
+-- DATA TYPE - CHAR VE VARCHAR
+/*
+char(size):		Sabit sayıda karakterleri (harf, numara ve özel karakter) saklar.
+				size -> saklanacak karakter sayısıdır. 0 ile 255 arasında değer alabilir. char(11), char(255)
+				char -> default olarak 1 dir.
+				SSN, ISBN, Zip Code, Eyalet kısaltmaları (FL, CA, ..) gibi uzunluğun sabit olduğu durumlarda kullanılır.
+varchar(size):	Farklı uzunluklardaki karakterleri (harf, numara ve özel karakter) saklar.
+				size -> saklanacak karakter sayısıdır. 0 ile 65.535 arasında değer alabilir. varchar(125), varchar(9500)
+https://dev.mysql.com/doc/refman/8.0/en/char.html
+*/
+
+
+-- Veri Girisi 2 sekilde yapilabilir
+insert into student values('1000','kemal Gur',25);
+insert into student values('1001','Canan Yaman',20);
+insert into student values('1002','Meltem Tan',32);
+insert into student values('1003','Omer Atalay',18);
+insert into student (id,name,age) values('1004','Ayse Sezgin',42);
+
+select * from student;
+-- student tablosundaki herseyi getirir
+
+select id from student;
+-- student tablosundaki id'leri getirir
+
+select id,name from student;
+
+drop table student;
+-- drop table tabloyu siler
+
+
+
+
+-----------------------------1.bolum/day02.sql---------------------------------------------------------------------------------------
+
+drop table students;
+
+create table students
+(
+id integer,
+isim varchar(40),
+adres varchar(100),
+sinav_notu int,
+yas integer, check(yas>16)
+);
+
+insert into students values(118,'Ayse Saliha','Ankara',68,19);
+insert into students values(119,'Hakan Yilmaz','Tokat',85,24);
+insert into students values(120,'Ali Can','Ankara',95,18);
+insert into students values(121,'Canan Yaman','Trabzon',45,22);
+insert into students values(122,'Meltem Tan','Istanbul',65,25);
+insert into students values(123,'Omer Atalay','Mersin',75,27);
+
+select*from students
+
+-- Soru01: Sinav notu 80'den buyuk olan ogrencilerin bilgilerini listele
+select * from students
+where sinav_notu>80; 
+
+
+-- Soru02: Adresi Ankara olan ogrencilerin isim ve adres bilgilerini listele
+select isim, adres from students
+where adres='Ankara';
+
+-- Soru03:id'si 123 olan ogrencilerin tum bilgilerini listele
+select*from students
+where id='123';
+
+-- Soru04: id'si 121 olan ogrencilerin adres ve sinav notunu listele
+select adres, sinav_notu from students
+where id=121;
+
+
+--Soru05:sinav notlari toplamini sinav_notu_toplami olarak listele
+select sum(sinav_notu) as sinav_notu_toplami from students;
+
+
+--Soru06:Siniftaki kisi sayisini listele
+select count(isim) as kisi_sayisi from students
+
+
+--Soru07:Sinifta 19 yasindan buyuk olanlarin isimlerini listele
+select isim from students
+where yas>19
+
+
+--Soru08:Sinifta 22 yasindan buyuk olanlarin kisi sayisini
+select count(isim) as kisi_sayisi from students
+where yas>22
+
+
+--id'si 121 olan ogrencinin sehrini Ankara olarak degistirir.
+update students
+set adres='Ankara'
+where id=121;
