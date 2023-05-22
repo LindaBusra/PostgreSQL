@@ -1,0 +1,64 @@
+
+
+
+DROP TABLE personel
+
+create table personel
+(
+id NUMERIC(4)PRIMARY KEY,
+isim VARCHAR(40),
+maas INT,
+yas NUMERIC(2)	
+);
+
+insert into personel values(1001,'Yasemin Guler',70000,45);
+insert into personel values(1002,'Hakan Yilmaz',85000,42);
+insert into personel values(1003,'Ali Can',70000,45);
+insert into personel values(1004,'Canan Yaman',10000,42);
+insert into personel values(1005,'Meltem Tan',65000,34);
+insert into personel values(1006,'Omer Atalay',75000,36);
+insert into personel values(1007,'Hatice Gunaydin',62000,33);
+insert into personel values(1008,'Mehmet Yaman',82000,36);
+
+select * from personel;
+
+-- Soru01: Max ve min maasli kisi bilgilerini listeleyin
+select*from personel
+where maas IN((select max(maas) from personel),  (select min(maas) from personel)) 
+
+
+-- Soru02: Ortalama maas bilgini ekrana ort_maas olarak listeleyin
+select avg(maas) as ort_maas from personel;
+
+
+-- Soru03: Maasi 7000'den fazla ve yasi 40'ten buyuk olanlari listele
+select*from personel
+where maas>7000 and yas>40;
+
+
+-- Soru04: id'si 1002 ile 1005 arasinda olan personel bilgilerini listeleyiniz
+select*from personel
+where id between 1002 and 1005;
+
+
+-- Soru05: id'si 1002 ile 1005 arasinda olmayan personel bilgilerini listeleyiniz
+select*from personel
+where id not between 1002 and 1005;
+
+
+-- Soru07: id'si 1001,1002 ve 1004 olan personel bilgilerini listeleyiniz
+select*from personel
+where id in(1001,1002,1004)
+
+select*from personel
+where id=1001 or id=1002 or id=1004
+
+
+-- Soru08: Maasi 70000 ve 100000 olan personeli listele
+select*from personel
+where maas in(70000, 100000);
+
+--Soru09:En dusuk maasli kisinin maasini 70000 olarak degistir
+update personel
+set maas= 70000
+where maas=(select min(maas) from personel);
