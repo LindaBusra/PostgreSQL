@@ -1,0 +1,94 @@
+
+
+/*
+SELECT - LIKE
+like: sorgulama yaparken belirli patternleri kullanabilmemiz saglar
+select sutun1, sutun2, ...
+from tablo_adi where sutun like pattern
+Pattern icin
+% -> 0 veya daha fazla karakteri belirtir
+_ -> Tek bir karakteri belirtir
+*/
+
+
+select*from personel;
+
+-- Question: ismi A harfi ile baslayan personeli listele
+select*from personel
+where isim like 'A%'
+
+
+-- Question: ismi z harfi ile biten personeli listele 
+select*from personel
+where isim like '%z'
+
+
+-- Question: isminde y harfi ile olan personeli listele
+select*from personel
+where isim like '%y%'
+
+
+-- Question: isminde y harfi ile olmayan personeli listele
+select*from personel
+where isim not like '%y%'
+
+
+-- Question: isminin 2. harfi a olan personeli listele
+select*from personel
+where isim like '_a%'
+
+
+-- Question: isminin ilk harfi H veya C olan personeli listele
+select*from personel
+where isim like 'H%' or isim like 'C%'
+
+
+-- Question: isminin icinde 'ana' personeli listele
+select*from personel
+where isim like '%ana%';
+
+
+-- Question: isminin 2. harfi m olup diger harflerinde t olan personel
+select*from personel
+where isim like '_m%t%'
+
+
+-- Question: 1. harfi O ve 4. harfi r olan personeli listeleyin
+select * from personel 
+where isim like 'O__r%';
+
+
+-- Question: ismi 7 harfli olan personeli listeleyin
+select * from personel 
+where isim like '_______';
+
+
+-- Question: isminin 4 harfi a olan personeli listeleyin
+select * from personel 
+where isim like '___a%';
+
+
+-- Question: isminin sondan ikinci harfi e olan personelin adini ve yasini listeleyin
+select isim, yas from personel 
+where isim like '%e_';
+
+
+-- Question: Sonu 'az' veya 'an' ile bitenleri büyük-küçük harfe dikkat ederek listeleyeniz.
+select*from personel
+where isim like ('%az') or isim like ('%an')
+
+-- Question: Sonu 'er' veya 'in' ile bitmeyeneleri büyük-küçük harfe dikkat ederek listeleyeniz.
+select*from personel
+where isim not like ('%er') and isim not like ('%in')
+
+--
+-- Question: 'Om' veya 'Me' ile başlayan isimleri büyük-küçük harfe dikkat etmeksizin listeleyeniz
+
+select*from personel
+where isim like ('Om%') or isim like ('Me%')
+
+
+-- Question: h ile başlayıp t ile biten 4 harfli kelimeleri (h ile t küçük harfli olanlari) listeleyeniz
+select*from personel
+where isim like 'h__t';
+
