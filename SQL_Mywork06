@@ -1,0 +1,79 @@
+    
+/*============================== ON DELETE CASCADE =============================
+  Her defasında önce child tablodaki verileri silmek yerine ON DELETE CASCADE
+  silme özelliğini aktif hale getirebiliriz.
+ 
+  Bunun için FK olan satırın en sonuna ON DELETE CASCADE komutunu yazmak yeterli
+ 
+==============================================================================*/
+
+
+-- drop table talebeler;
+-- talebeler tablosunu silmeyecek çünkü
+-- CONSTRAINT notlar_fk FOREIGN KEY (talebe_id) REFERENCES talebeler(id)
+-- komutu ile talebeler'deki idleri notlardaki  talebe_id'ler ile birbirine bağladık.
+-- bağlanti tablolarda child silinmeden parent silinmez
+
+drop table notlar;
+-- notlar table silebiliyoruz.
+-- child table silindikten sonra parent table da silinebilir.
+
+delete from talebeler where id = 123; -- parent
+-- bağlantı olduğu için silemiyoruz.
+     
+delete from notlar where adres_id= 123; -- child'den sildikten sonra parentetn silinebilir
+
+
+CREATE TABLE talebeler
+(
+id CHAR(3) primary key,  
+isim VARCHAR(50),
+veli_isim VARCHAR(50),
+yazili_notu int
+);
+   
+INSERT INTO talebeler VALUES(123, 'Ali Can', 'Hasan',75);
+INSERT INTO talebeler VALUES(124, 'Merve Gul', 'Ayse',85);
+INSERT INTO talebeler VALUES(125, 'Kemal Yasa', 'Hasan',85);
+INSERT INTO talebeler VALUES(126, 'Nesibe Yılmaz', 'Ayse',95);
+INSERT INTO talebeler VALUES(127, 'Mustafa Bak', 'Can',99);
+
+select * from talebeler;
+
+CREATE TABLE notlar
+( talebe_id char(3),
+ders_adi varchar(30),
+yazili_notu int,
+CONSTRAINT notlar_fk FOREIGN KEY (talebe_id) REFERENCES talebeler(id)
+on delete cascade);
+
+-- on delete cascade ile parentte silinen bir kayit varsa, bu kayitla ilgili tum 
+-- hersey child' dan da silinir . Cascade yoksa once child temizlenir ardindan parent. 
+
+   
+
+INSERT INTO notlar VALUES ('123','kimya',75);
+INSERT INTO notlar VALUES ('124', 'fizik',65);
+INSERT INTO notlar VALUES ('125', 'tarih',90);
+INSERT INTO notlar VALUES ('126', 'Matematik',90);
+
+select * from notlar;
+   
+--to get all some records from two table
+SELECT * FROM talebeler, notlar WHERE talebeler.id = notlar.talebe_id;
+
+   
+select isim from talebeler, notlar
+where talebeler.id=notlar.talebe_id;
+
+-- child tablodaki veriyi sildiğimiz zaman sadece child'daki veri silinir. parent taki veri silinmez.
+delete from notlar where talebe_id='123';
+
+     
+delete from talebeler where id='124';-- parent
+-- parent tablodaki veriyi sildiğimiz zaman child'daki veride silinir.
+   
+select * from talebeler;
+select * from notlar;
+
+
