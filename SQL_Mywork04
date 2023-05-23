@@ -1,0 +1,151 @@
+
+
+/* 
+
+--1)WildCard %: It represents zero or more characters
+--LIKE Condition: It is used with WildCards
+
+--2)_ WildCard: It represents a single character
+--Select state whose second character is 'e' and forth character is 'n'.
+
+====================== SELECT - REGEXP_LIKE ================================
+    Daha karmaşık pattern ile sorgulama işlemi için REGEXP_LIKE kullanılabilir.
+     -- 'c' => case-sensitive demektir
+     -- 'i' => incase-sensitive demektir ve default incase-sensitive aktiftir..
+    Syntax:
+    --------
+    REGEXP_LIKE(sutun_adı, 'pattern[] ', 'c' ] )
+	
+	-- Başlangıcı göstermek için ^ karakteri kullanılır.
+	-- Bitişi göstermek için $ karakteri kullanılır.
+	-- 3 HARF -> h1.harf / [] 2.harf / t 3.harf
+ ========================================================================== */
+
+drop table words
+
+
+use test;
+CREATE TABLE words
+(
+id int UNIQUE,
+word VARCHAR(50) NOT NULL,
+num_of_character int
+);
+    INSERT INTO words VALUES (1001, 'hot', 3);
+    INSERT INTO words VALUES (1002, 'hat', 3);
+    INSERT INTO words VALUES (1003, 'hit', 3);
+    INSERT INTO words VALUES (1004, 'hbt', 3);
+    INSERT INTO words VALUES (1005, 'hct', 3);
+    INSERT INTO words VALUES (1006, 'adem', 4);
+    INSERT INTO words VALUES (1007, 'selim', 5);
+    INSERT INTO words VALUES (1008, 'yusuf', 5);
+    INSERT INTO words VALUES (1009, 'hip', 3);
+    INSERT INTO words VALUES (1010, 'HOT', 3);
+    INSERT INTO words VALUES (1011, 'hOt', 3);
+    INSERT INTO words VALUES (1012, 'h9t', 3);
+    INSERT INTO words VALUES (1013, 'hoot', 4);
+    INSERT INTO words VALUES (1014, 'haaat', 5);
+    INSERT INTO words VALUES (1015, 'hooooot', 5);
+	
+
+select * from words;
+
+-- Question: İçerisinde 'ot' veya 'at' bulunan kelimeleri küçük harfe dikkat ederek listeleyiniz
+
+select*from words
+where regexp_like (word, 'ot|at', 'c');
+
+
+-- Question: İçerisinde 'dem' veya 'suf' olmayan kelimeleri küçük harfe dikkat ederek listeleyiniz
+select*from words
+where not regexp_like (word, 'dem|suf', 'c')
+
+
+-- Question: İçerisinde 'oot' veya 'aat' bulunan kelimeleri büyük-küçük harfe dikkat etmeksizin listeleyeniz
+select*from words
+where regexp_like (word, 'oot|aat', 'i');
+
+select*from words
+where regexp_like (word, 'oot|aat');  -- 'i' is default
+
+
+-- Question: 'ho' veya 'hi' ile başlayan kelimeleri büyük-küçük harfe dikkat etmeksizin listeleyeniz
+select*from words
+where regexp_like (word, '(^ho|^hi)')
+
+select*from words
+where word like ('ho%') or word like ('hi%')
+
+-- Question: Sonu 'at' veya 'em' ile bitenleri büyük-küçük harfe dikkat etmeksizin listeleyeniz.
+select*from words
+where regexp_like (word, 'at$|em$')
+
+select*from words
+where word like ('%at') or word like ('%em')
+
+
+-- Question: h ile başlayıp t ile biten 3 harfli kelimeleri (h ile t küçük harfli olanlari) listeleyeniz
+select*from words
+where word like 'h_t';
+
+select*from words
+where regexp_like (word, 'h[a-zA-Z0-9]t')
+
+
+-- Question: h ile başlayıp t ile biten 4 harfli kelimeleri (h ile t küçük harfli olanlari) listeleyeniz
+select*from words
+where word like 'h__t';
+
+select*from words
+where regexp_like (word, 'h[a-zA-Z0-9][a-zA-Z0-9]t')
+
+
+--Question: İlk harfi h, son harfi t olup 2.harfi a veya i olan 3 harfli kelimelerin tüm bilgilerini sorgulayalım.
+select*from words
+where regexp_like (word, 'h[ai]t')
+
+
+-- Question: İçinde m veya i veya e olan kelimelerin tüm bilgilerini listeleyiniz.
+select*from words
+where regexp_like (word, '[mie]')
+
+select*from words
+where regexp_like (word, 'i|e|m')
+
+
+-- Question: a veya s ile başlayan kelimelerin tüm bilgilerini listeleyiniz.
+select*from words
+where regexp_like (word,'^a|^s')
+
+
+-- Question: içerisinde en az 2 adet oo barıdıran kelimelerin tüm bilgilerini listeleyiniz.
+select*from words
+where regexp_like (word, 'oo')
+
+
+-- Question: içerisinde en az 4 adet oooo barıdıran kelimelerin tüm bilgilerini listeleyiniz.
+select*from words
+where regexp_like (word,'oooo')
+
+
+-- Question: ilk harfi s veya b , 3. harfi l olan ve 5 harfli olan kelimelerin küçük harfe dikkat ederek listeleyiniz.
+select*from words
+where regexp_like (word, '^s|^b_[l]__', 'c')
+
+
+-- Question: Sonu 'em' veya 'im' ile bitmeyenleri büyük-küçük harfe dikkat ederek listeleyeniz.
+select*from words
+where not regexp_like (word, 'em$|im$')
+
+
+
+-- Question: Ilk harfi y veya a , 4. harfi m veya u olan, 4 harfli olan kelimelerin küçük harfe dikkat ederek listeleyiniz.
+select*from words
+where regexp_like (word, '^y[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]m|u' ) or
+regexp_like (word, '^a|^a[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]m|u' )
+
+
+SELECT word From words
+ where regexp_like (word,'^y|^a__[m|u]') -->just yusuf???
+ 
+ 
