@@ -1,0 +1,176 @@
+--8. Session SQL Making SQL Queries (Group By, Having, Operators, Joins) 24.05.2023
+
+
+CREATE TABLE workers (  
+  id CHAR(9), 
+  name VARCHAR(50), 
+  state VARCHAR(50), 
+  salary SMALLINT,
+  company VARCHAR(20)
+);
+
+
+INSERT INTO workers VALUES(123456789, 'John Walker', 'Florida', 2500, 'IBM');
+INSERT INTO workers VALUES(234567890, 'Brad Pitt', 'Florida', 1500, 'APPLE');
+INSERT INTO workers VALUES(345678901, 'Eddie Murphy', 'Texas', 3000, 'IBM');
+INSERT INTO workers VALUES(456789012, 'Eddie Murphy', 'Virginia', 1000, 'GOOGLE');
+INSERT INTO workers VALUES(567890123, 'Eddie Murphy', 'Texas', 7000, 'MICROSOFT');
+INSERT INTO workers VALUES(456789012, 'Brad Pitt', 'Texas', 1500, 'GOOGLE');
+INSERT INTO workers VALUES(123456710, 'Mark Stone', 'Pennsylvania', 2500, 'IBM');
+
+
+SELECT * FROM workers;
+DROP TABLE workers;
+
+
+--Find the minimum salary if it is more than 2000 for every company
+SELECT company, MIN(salary) AS min_salary_per_company FROM workers
+GROUP BY company
+HAVING MIN(SALARY)>2000
+
+
+--Find the maximum salary if it is less than 3000 for every state
+SELECT state, MAX(salary) AS max_salary FROM workers
+GROUP BY state
+HAVING MAX(salary)<3000
+
+
+
+--UNION OPERATOR
+--1)It is used to combine the result of 2 queries
+--2)UNION Operator returns unique records everytime, if there are repeated records it removes the repeated ones
+--3)By using "UNION Operator" we are able to put different fields into a single field like in the following example
+
+
+--Find the state whose salary is greater than 3000, employee names  whose salary is less than 2000 without duplication.
+SELECT state AS "State or Employee Name", salary
+FROM workers
+WHERE salary>3000 
+UNION
+SELECT name AS "State or Employee Name", salary
+FROM workers
+WHERE salary<2000 
+
+
+-- in other SQL languages like Oracle, when we compare to fields like name VARCHAR(50) and state VARCHAR(50), they must be same in datatype size for to be able to use UNION
+-- each UNION query must have the same number of columns
+-- but it works in PostgreSQL
+SELECT state AS "State or Employee Name", salary
+FROM workers
+WHERE salary>3000 
+UNION
+SELECT company AS "State or Employee Name", salary
+FROM workers
+WHERE salary<2000 
+
+
+
+
+--UNION ALL Operator: Does the same wit UNION, just it returms repeated records if there is any.
+
+
+--Find the state whose salary is greater than 3000, employee names less than 2000 with duplication.
+SELECT state AS "State or Employee Name", salary
+FROM workers
+WHERE salary>3000 
+UNION ALL
+SELECT name AS "State or Employee Name", salary
+FROM workers
+WHERE salary<2000 
+
+
+
+--INTERSECT Operator  (kesisim kumesi)
+--Returns common records of 2 queries
+--It returns unique data
+
+--Find all common employee names whose salary is greater than 1000, less than 2000
+SELECT name FROM workers
+WHERE salary>1000 
+INTERSECT
+SELECT name FROM workers
+WHERE salary<2000 
+
+
+--Find all common employee names whose salary is greater than 2000 and company name is IBM, APPLE or GOOGLE
+SELECT name FROM workers
+WHERE salary>2000
+INTERSECT
+SELECT name FROM workers
+WHERE company IN('IBM', 'APPLE', 'GOOGLE')
+
+
+SELECT * FROM workers;
+
+--EXCEPT Operator: (A kumesinin B'den farki)
+--It is used to extract one query result from another one
+--It returns unique records
+
+
+--Find the employee names whose salary is less than 3000 and not working in GOOGLE
+SELECT name FROM workers
+WHERE salary<3000
+EXCEPT
+SELECT name FROM workers
+WHERE company='GOOGLE';
+
+
+
+--*********************************************************************************************************************************
+
+
+--JOINS
+--1)INNER JOIN: It returns common data from two tables. (iki tablonun kesisimi)  
+--2)LEFT JOIN: Returns all data from the first table (T1 ve T2 nin kesisimi ile T1 in tamami)
+--3)RIGHT JOIN: Returns all data from the second table (T1 ve T2 nin kesisimi ile T2 nin tamami)
+--4)FULL JOIN: Returns all data from both table (T1 ve T2 nin birlesimi)
+--5)SELF JOIN: You will have a single table but you will use it as 2 tables
+
+
+
+CREATE TABLE my_companies 
+(  
+  company_id CHAR(3), 
+  company_name VARCHAR(20)
+);
+
+INSERT INTO my_companies VALUES(100, 'IBM');
+INSERT INTO my_companies VALUES(101, 'GOOGLE');
+INSERT INTO my_companies VALUES(102, 'MICROSOFT');
+INSERT INTO my_companies VALUES(103, 'APPLE');
+
+SELECT * FROM my_companies;
+
+CREATE TABLE orders 
+(  
+  company_id CHAR(3),   
+  order_id CHAR(3),
+  order_date DATE
+);
+
+INSERT INTO orders VALUES(101, 11, '17-Apr-2020');
+INSERT INTO orders VALUES(102, 22, '18-Apr-2020');
+INSERT INTO orders VALUES(103, 33, '19-Apr-2020');
+INSERT INTO orders VALUES(104, 44, '20-Apr-2020');
+INSERT INTO orders VALUES(105, 55, '21-Apr-2020');
+
+SELECT * FROM orders;
+
+
+
+--INNER JOIN  - ON
+
+--SELECT company name, order id and order date common companies
+SELECT mc.company_name, o.order_id, o.order_date
+FROM my_companies mc INNER JOIN orders o
+ON o.company_id=mc.company_id;
+
+
+--2) LEFT JOIN: Returns all data from first table
+--Get company_name,  order id and order date for the companies in my_companies table
+SELECT mc.company_name, o.order_id, o.order_date
+FROM my_companies mc LEFT JOIN orders o
+ON o.company_id=mc.company_id;
+
+
+
