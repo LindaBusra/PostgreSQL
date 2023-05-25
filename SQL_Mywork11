@@ -1,0 +1,153 @@
+
+--Create workers table whose fields are worker_id, worker_name, worker_salary.
+--worker_id will have primary key with the name of worker_id_pk.
+--insert 4 records into the workers table
+--se the table on the console
+
+
+CREATE TABLE workers(
+	
+worker_id CHAR(3),
+worker_name VARCHAR(40),
+worker_salary NUMERIC(10),
+CONSTRAINT 	worker_id_pk PRIMARY KEY(worker_id)
+
+)
+
+
+INSERT INTO workers VALUES('101', 'Terje Ringen', 12000);
+INSERT INTO workers VALUES('102', 'Carina Bacheim', 2000);
+INSERT INTO workers VALUES('103', 'Ole Solback', 7000);
+INSERT INTO workers VALUES('104', 'Mary Selena', 8500);
+INSERT INTO workers VALUES('103', 'Ole Solback', 17000);
+INSERT INTO workers VALUES('104', 'Mary Selena', 18000);
+
+
+
+select*from workers;
+drop table workers;		--delete all table
+delete from workers;	--delete just data from table		
+
+--Increase the salary of Carina to 20 procent less than the highest salary
+UPDATE workers
+SET worker_salary = (SELECT MAX(worker_salary)*0.80 FROM workers)
+WHERE worker_id='102'
+
+--Decrease the salary of Terje to 30 procent more than the lowest salary
+UPDATE workers
+SET worker_salary = (SELECT MIN(worker_salary)*1.30 FROM workers)
+WHERE worker_name='101'
+
+--Increase the salaries by 1000 if the salaries are less than the average salary
+UPDATE workers
+SET worker_salary = worker_salary+1000
+WHERE worker_salary <(SELECT AVG(worker_salary) FROM workers);
+
+select sum(worker_salary) as sum_of_salary from workers;
+select avg(worker_salary) as avg_of_salary from workers;
+
+
+--Make  the salaries equal to the average salary if the salaries are less than the average salary
+UPDATE workers
+SET worker_salary = (SELECT AVG(worker_salary) FROM workers)   -- (subguery)
+WHERE worker_salary <(SELECT AVG(worker_salary) FROM workers); -- (subguery)
+--inside a SQL statement if we have query it calles subquery 
+
+
+
+--IS NULL Condition
+
+CREATE TABLE people (
+ssn CHAR(9),
+name VARCHAR(50),
+address VARCHAR(80)
+
+)
+
+INSERT INTO people VALUES(123456789, 'Terje Ringen', 'Florida');
+INSERT INTO people VALUES(123456788, 'Carina Bacheim', 'Virginia');
+INSERT INTO people VALUES(123456787, 'Ole Solback', 'New Jersey');
+INSERT INTO people (ssn, address) VALUES(123456786, 'California');
+INSERT INTO people (ssn, address) VALUES(123456785, 'New Jersey');
+INSERT INTO people (ssn, name) VALUES(123456784, 'Mary Selena');
+
+
+--Change null names to "Name will be inserted later"
+UPDATE people
+SET name ='Name will be inserted later'
+WHERE name IS NULL;
+
+--Change null names to "Address will be inserted later"
+UPDATE people
+SET address ='Address will be inserted later'
+WHERE address IS NULL;
+
+--Change all null values to "To be inserted later" in people table  
+UPDATE people
+SET name = COALESCE(name, 'To be inserted later'),
+address = COALESCE(address, 'To be inserted later');
+
+--to change all null values we use COALESCE
+
+
+--How to delete data(record) from a table
+
+--Delete Terje Ringen from table
+delete from people
+where ssn='123456789';
+
+
+--Delete records which do not have name
+delete from people
+where name = 'To be inserted later';
+
+
+--Delete all records
+delete from people;   --you are not filtering anything
+				      --Delete command deletes all records, it does not destroy the table		
+
+
+--Delete all records whose name is null or address is null
+--Do not use "=null" -->use IS NULL
+DELETE FROM people
+WHERE name is null OR address is null;
+
+
+
+drop table people;  	--delete table
+delete from people;		--delete data from table
+select*from people;
+
+
+--Delete all records whose ssn is greater than "123456787"  and less than "123456789"
+DELETE FROM people
+WHERE ssn>'123456787' AND ssn<'123456789';
+
+--Delete all records whose name is not null
+DELETE FROM people
+WHERE name IS NOT NULL;
+
+
+
+--TRUNCATE Command removes all records everytime
+--"TRUNCATE TABLE people" is the same with the "DELETE FROM people"
+
+--What are the differences between TRUNCATE and DELETE? 
+--1)In DELETE FROM you can use WHERE Clause to filter, but in TRUNCATE you can not.
+--2)If you remove records by using DELETE FROM, the records can be rolled back, but if you remove
+--records by using TRUNCATE the records can not be rolled back
+
+TRUNCATE TABLE people;   --it delete just data(records)
+
+--Schema:Schema has tables related with each other
+
+--How to remove table from schema?
+
+--If you do not use "PURGE", you can get the table back by using some codes.
+DROP TABLE people;
+--If you  use "PURGE", you can not get the table back.
+DROP TABLE workers PURGE;
+
+--In java "Not Equal" means "!=", In SQL "Not Equal" means "<>"
+
+--DQL (Data Query Language) Statement: It is language for reading data. We will use "SELECT"
