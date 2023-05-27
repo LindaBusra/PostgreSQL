@@ -1,0 +1,86 @@
+
+--SUBQUERY AFTER WHERE --using subquery between two tables
+
+CREATE TABLE employees (
+id NUMERIC(9),
+name VARCHAR(50),
+state VARCHAR(50),
+salary NUMERIC(20),
+company VARCHAR(20)
+);
+
+INSERT INTO employees VALUES (123456789, 'John Walker', 'Florida', 2500, 'IBM');
+INSERT INTO employees VALUES (123456788, 'Brad Pitt', 'Florida', 1500, 'APPLE');
+INSERT INTO employees VALUES (123456787, 'Eddie Murphy', 'Texas', 3000, 'IBM');
+INSERT INTO employees VALUES (123456786, 'Eddie Murphy', 'Virginia', 1000, 'GOOGLE');
+INSERT INTO employees VALUES (123456785, 'Eddie Murphy', 'Texas', 7000, 'MICROSOFT');
+INSERT INTO employees VALUES (123456784, 'Brad Pitt', 'Texas', 1500, 'GOOGLE');
+INSERT INTO employees VALUES (123456783, 'Mark Stone', 'Pennsylvania', 2500, 'IBM');
+
+
+CREATE TABLE companies (
+company_id NUMERIC(9),
+company VARCHAR(20),
+number_of_employeers NUMERIC(20)
+
+);
+
+INSERT INTO companies VALUES (100, 'IBM', 12000);
+INSERT INTO companies VALUES (101, 'GOOGLE', 18000);
+INSERT INTO companies VALUES (102, 'MICROSOFT', 10000);
+INSERT INTO companies VALUES (100, 'APPLE', 21000);
+
+select * from employees;
+delete from employees;
+drop table employees;
+
+select * from companies ;
+delete from companies ;
+drop table companies ;
+
+
+--1)Find the employee and company names whose company has more than 15000 employeers
+
+SELECT name, company from employees
+where company IN(SELECT company FROM companies WHERE companies.number_of_employeers>15000); --company is common field
+
+
+--2)Find the company_ids and company names whose which are in Florida. 
+
+SELECT company_id, company from companies
+where company IN(select company from employees WHERE employees.state = 'Florida');
+
+
+--3)Find the employee name and state which has companies whose company ids are greater than100
+
+select name, state 
+from employees
+where company in(select company from companies where company_id>100  );   --Where company, because company is common between two table
+--I said company after where, so I should say company after select
+
+
+
+
+------------------------5. Session SQL 4-2------------------------------
+
+--SUBQUERY AFTER SELECT
+
+--4)Find the company name, number of employees and average salary for every company
+
+select company, number_of_employeers, (select avg(salary) 
+									   from employees 
+									   where companies.company=employees.company) 
+									   as avg_salary_per_company
+from companies;
+
+
+--5)Find the name of companies, company ids, maximum and minimum salaries per company.
+select company, company_id, (select max(salary) from employees where employees.company=companies.company) as max_salary, 
+							(select min(salary) from employees where employees.company=companies.company) as min_salary 
+from companies;
+
+
+--6)Find the company_id and total salary per company
+select company_id, (select sum(salary) from employees where employees.company=companies.company) as total_salary 
+from companies;
+
