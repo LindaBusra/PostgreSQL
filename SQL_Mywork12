@@ -1,0 +1,193 @@
+CREATE TABLE workers(
+	
+id CHAR(5),
+name VARCHAR(50),
+salary NUMERIC(10),
+CONSTRAINT 	id4_pk PRIMARY KEY(id)
+
+)
+
+
+INSERT INTO workers VALUES('10001', 'Angie Ocean', 12000);
+INSERT INTO workers VALUES('10002', 'Carina Bacheim', 2000);
+INSERT INTO workers VALUES('10003', 'Ole Solback', 7000);
+INSERT INTO workers VALUES('10004', 'Mary Selena', 8500);
+
+--How to select all records
+SELECT*
+FROM workers;
+
+--How to get a spesific field from a table
+SELECT name
+FROM workers;
+
+--How to get a spesific multiple fields from a table
+SELECT name, salary
+FROM workers;
+
+--How to get a spesific record 
+SELECT *
+FROM workers
+WHERE id='10001';
+
+
+--How to get multiple spesific records 
+SELECT *
+FROM workers
+WHERE id<'10003';
+
+--Get records whose salary is 2000 or 7000 or 12000; 
+--Instead of using OR again and again use IN
+SELECT *
+FROM workers
+WHERE salary in(2000, 7000, 12000),
+
+
+SELECT *
+FROM workers
+WHERE salary=2000 OR salary=7000 OR salary=12000);
+
+SELECT*FROM workers;
+
+--How to select spesific cell
+--Just get "Ole Solback" on the console
+SELECT name 
+FROM workers
+WHERE id='10003';
+
+
+--Intervju Question:How to select record whose salary is the highest
+SELECT *
+FROM workers
+WHERE salary = (SELECT MAX(salary) from workers);  -->subquery
+
+
+--Intervju Question:How to select worker name whose salary is the lowest?
+SELECT name
+FROM workers
+WHERE salary=(SELECT MIN(salary) from workers);
+
+--Intervju Question:How to select records  whose salary is the lowest and the highets?
+SELECT*
+FROM workers
+WHERE salary=(SELECT MIN(salary) from workers) OR salary=(SELECT MAX(salary) from workers)
+
+--or
+SELECT*
+FROM workers
+WHERE salary IN((SELECT MIN(salary) from workers),(SELECT MAX(salary) from workers));
+
+
+--Select max salary
+--By using AS you can put temporary field names for your table on the console
+SELECT MAX(salary) AS maximum_salary 
+FROM workers;
+
+--Select min salary
+SELECT MIN(salary) AS minimum_salary 
+FROM workers;
+
+--Select average salary
+SELECT AVG(salary) AS average_salary 
+FROM workers;
+
+--Select the number of workers
+SELECT COUNT(name) AS number_of_worker
+FROM workers;
+
+--Find the sum of salaries
+SELECT SUM(salary) AS sum_of_salary
+FROM workers;
+
+
+----
+--Interview Question: Select the second highest salary
+SELECT MAX(salary) AS second_highest_salary 
+FROM workers
+where salary<(SELECT MAX(salary) from workers )
+
+
+SELECT salary AS second_highest_salary 
+from workers
+order by salary desc
+offset 1 row
+fetch next 1 rows only;
+
+
+SELECT column_name(s)
+FROM table_name
+ORDER BY column_name
+OFFSET rows_to_skip
+FETCH NEXT number_of_rows ROWS ONLY;   --to get
+
+
+--Interview Question: Select the second lowest salary
+SELECT MIN(salary) AS second_minimum_salary 
+FROM workers
+where salary>(SELECT MIN(salary) from workers )
+
+
+--Interview Question: Select the THIRD highest salary
+SELECT salary AS second_highest_salary 
+from workers
+order by salary desc
+offset 2 row			--delete to row
+fetch next 1 rows only	--get one row
+
+SELECT*FROM workers;
+
+--or
+SELECT MAX(salary) AS third_highest_salary 
+FROM workers
+where salary<(SELECT MAX(salary) 
+			  from workers 
+			  where salary<(SELECT MAX(salary) from workers));
+
+
+
+--Interview Question: Select the third lowest salary
+SELECT MIN(salary) AS second_minimum_salary 
+FROM workers
+where salary>(SELECT MIN(salary) 
+			  from workers  
+			  where salary> (SELECT MIN(salary) from workers));  --We used subquery twice
+
+--OR
+SELECT salary AS second_minimum_salary 
+FROM workers
+ORDER BY salary asc
+OFFSET 2 ROW		--it will remove first two record
+FETCH NEXT 1 ROW ONLY;
+
+
+
+--Select all data about the worker whose salary is the second highest
+select*from workers
+where salary=(select max(salary) 
+			  from workers 
+			  where salary<(select max(salary) from workers))
+
+--or
+SELECT* 
+FROM workers
+ORDER BY salary desc
+OFFSET 1 ROW
+FETCH NEXT 1 ROW ONLY;
+
+
+
+--Select all data about the worker whose salary is the second lowest
+select*from workers
+where salary=(select min(salary) 
+			  from workers 
+			  where salary>(select min(salary) from workers))
+		
+		
+--2.way This work for just PL/SQL			  
+SELECT* 
+FROM workers
+ORDER BY salary asc
+OFFSET 1 ROW
+FETCH NEXT 1 ROW ONLY;
+
+
