@@ -1,0 +1,170 @@
+
+------------------------------------------------------------------------------
+
+--LIKE CONDITION: It is used with WildCards. Some regular expressions
+
+--1) % Wildcard:It represents zero or more characters
+--2) _Wilcard: It represents a single character
+------------------------------------------------------------------------------
+
+--1)Select employee name which start with 'E'
+
+select name
+from employees
+where name like 'E%';
+
+--2)Select employee name which ends with 'e'
+select name 
+from employees
+where name like '%e';
+
+--3)Select employee name which start with 'B', and ends with 't'
+select name
+from employees
+where name like 'B%t';
+
+
+--4)Select employee names which has 'a' in any position
+select name
+from employees
+where name like '%a%';
+
+--5)Select employee names which has 'ad' in any position
+select name
+from employees
+where name like '%ad%';
+
+--6)Select employee names which has 'e' and 'r' in any position
+select name
+from employees
+where name like '%e%r%' OR name LIKE '%r%e%' ;
+
+
+-- _Wilcard: It represents a single character
+
+--7)Select state  whose second character is 'e' and forth character is 'n'
+select state
+from employees
+where state like '_e_n%'
+
+--7)Select state  whose last second character is 'i' 
+select state from employees
+where state like '%i_';
+
+--8)Select states whose second character is 'e' and it has at least 6 characters
+select state from employees
+where state like '_e____%';
+
+--9)Select states which has 'a' in any position after second caharacter
+select state from employees
+where state like '__%a%';
+
+
+-------------------------------------------------------------------------
+
+--REGEXP_LIKE CONDITION: You can use regular expressions with REGEXP_LIKE Condition
+
+--------------------------------------------------------------------------
+
+CREATE TABLE words (
+word_id NUMERIC(10) UNIQUE,
+word VARCHAR(50)NOT NULL,
+number_of_letters NUMERIC(6)
+
+);
+
+
+INSERT INTO words VALUES (1001, 'hot', 3);
+INSERT INTO words VALUES (1002, 'hat', 3);
+INSERT INTO words VALUES (1003, 'hit', 3);
+INSERT INTO words VALUES (1004, 'hbt', 3);
+INSERT INTO words VALUES (1008, 'hct', 3);
+INSERT INTO words VALUES (1005, 'adem', 4);
+INSERT INTO words VALUES (1006, 'selena', 6);
+INSERT INTO words VALUES (1007, 'yusuf', 5);
+
+drop table words;
+delete from words;
+select*from words;
+
+SELECT COUNT(*) FROM words;
+
+--1) Select words whose first character is 'h', last (third) character is 't', and second character is
+--'o' or 'a' or 'i'
+
+--1.way: By using LIKE, not recommended because there is repetition
+select word
+from words
+where word like 'hot' or word like 'hat' or word like 'hit'
+
+--2.way: By using REGEXP_LIKE
+select word
+from words
+WHERE REGEXP_LIKE (word, 'h[o|a|i]t')
+
+--2) Select words whose first character is 'h', last (third) character is 't', and second character is
+--from a to e
+select word
+from words
+where regexp_like (word, 'h[a-e]t')  -->[a-e] means a,b,c,d,e
+
+--3) Select words whose first character is a, s, or y 
+select word
+from words
+where regexp_like (word, '^[a|s|y](*)') --(*) :it is optional
+
+
+--4) Select words whose last character is a, m, or f 
+select word
+from words
+where regexp_like (word, '[a|m|f]$')  -->or '[maf]$'
+
+--5) Select words whose first character is s, and  last is character a
+select word
+from words
+where regexp_like (word, '^[s].*[a]$')  --->.* use for multiple or zero characters between first and last character
+
+
+--6) Select words which have a in any position
+select word
+from words
+where regexp_like (word, 'a') -->'a' in REGEXP_LIKE same with '%a%' in LIKE
+
+
+--7) Select words which have characters from 'd' to 't' at the beginning followed by any character then 'l'
+--'t' is not last character
+select word
+from words
+where regexp_like (word, '^[d-t].[l]') --> . in REGEXP_LIKE same with _
+
+--8) Select words which have characters from 'd' to 't' at the beginning followed by any 2 character then 'e'
+--'t' is not last character
+select word
+from words
+where regexp_like (word, '^[d-t]..[e]')
+
+
+--9) Select words which have 'u' repeated twice
+select word
+from words
+where regexp_like (word, '[u].*[u]')
+
+-------------------------------------------------------------------------------------------------------------------
+
+--NOT LIKE CONDITION
+
+--1) Select words which do not have 'h' in any position
+select word
+from words
+where word not like '%h%';
+
+
+--2) Select words which do not end with 't' and 'f'
+select word
+from words
+where word not like '%f' and word not like '%t'  --be careful about using AND, it is because of the logic rules
+
+--3) Select words which start with any character. not followed by 'a', not followed by 'e'
+select word
+from words
+where word not like '_a%' and word not like '_e%';
