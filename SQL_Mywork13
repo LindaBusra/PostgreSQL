@@ -1,0 +1,155 @@
+
+CREATE TABLE workers(
+	
+id CHAR(5),
+name VARCHAR(50),
+salary NUMERIC(5),
+CONSTRAINT 	id4_pk PRIMARY KEY(id)
+
+)
+
+
+INSERT INTO workers VALUES('10001', 'Angie Ocean', 12000);
+INSERT INTO workers VALUES('10002', 'Carina Bacheim', 2000);
+INSERT INTO workers VALUES('10003', 'Ole Solback', 7000);
+INSERT INTO workers VALUES('10004', 'Mary Selena', 8500);
+
+
+select*from workers;
+
+
+--Select all data whose salary is the third highest salary from workers table
+
+select*from workers
+order by salary desc
+offset 2 row
+fetch next 1 row only;
+
+
+select*from workers
+where salary=(select max(salary) as third_max_salary from workers 
+			  where salary<(select max(salary) as second_max_salary from workers 
+							where salary<(select max(salary) from workers)));
+
+
+
+
+CREATE TABLE customers_product (
+product_id NUMERIC(10),
+customer_name VARCHAR(50),
+product_name VARCHAR(50)
+)
+
+INSERT INTO customers_product VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_product VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_product VALUES (20, 'John', 'Apple');
+INSERT INTO customers_product VALUES (30, 'Emy', 'Palm');
+INSERT INTO customers_product VALUES (20, 'Mark', 'Apple');
+INSERT INTO customers_product VALUES (10, 'Adem', 'Orange');
+INSERT INTO customers_product VALUES (40, 'John', 'Apricot');
+INSERT INTO customers_product VALUES (20, 'Eddie', 'Apple');
+
+select*from customers_product;
+delete from customers_product;
+drop table customers_product;
+
+
+--IN Condition: Instead of multiple OR we use IN
+
+--1)Select records whose product name is Orange, Apple or Palm?
+
+Select*from customers_product
+where product_name in ('Orange', 'Apple', 'Palm')
+
+--2.way, but not recommended because of the repetition
+Select*from customers_product
+where product_name='Orange' or product_name='Apple' or product_name='Palm';
+
+
+--NOT In Condition
+
+--2)Select records whose product name is not Orange, Apple or Palm?
+
+Select*from customers_product
+where product_name not in ('Orange', 'Apple', 'Palm')
+
+
+
+--BETWEEN Condition
+
+--3)Select records whose product id is less than or equal to 30 and greater than or equal 20.
+Select*from customers_product
+where product_id  between 20  and 30;	--20 and 30 are inclusive
+
+--2.way, but not recommended because of the repetition
+Select*from customers_product
+where product_id<=30 and product_id>=20;	
+
+
+--NOT BETWEEN Condition
+
+--4)Select records whose product id is less than 20, greater than 25  -->, means OR
+Select*from customers_product
+where product_id not between 20  and 25;
+
+--2.way, but not recommended because of the repetition
+Select*from customers_product
+where product_id<20 or product_id>25;
+
+
+
+
+
+--EXISTS Condition EXISTS condition is used with Subquery.
+--If the Squbquery returns any record Quter Query will be executed.
+--If the Squbquery does not return any record Quter Query will not be executed.
+--EXISTS  can be used in SELECT, INSERT, UPDATE and DELETE commands.
+
+
+CREATE TABLE customers_likes (
+product_id NUMERIC(10),
+customer_name VARCHAR(50),
+liked_product VARCHAR(50)
+)
+
+INSERT INTO customers_likes VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_likes VALUES (50, 'Mark', 'Pineapple');
+INSERT INTO customers_likes VALUES (60, 'John', 'Avocado');
+INSERT INTO customers_likes VALUES (30, 'Lary', 'Cherries');
+INSERT INTO customers_likes VALUES (20, 'Mark', 'Apple');
+INSERT INTO customers_likes VALUES (10, 'Adem', 'Orange');
+INSERT INTO customers_likes VALUES (40, 'John', 'Apricot');
+INSERT INTO customers_likes VALUES (20, 'Eddie', 'Apple');
+
+select * from customers_likes;
+delete from customers_likes;
+drop table customers_likes;
+
+
+--1)Select customer names if the product ids are same in customers_products and customers_likes table.
+
+Select product_id, customer_name 
+from customers_product
+where EXISTS (SELECT product_id FROM customers_likes 
+			  where customers_product.product_id=customers_likes.product_id )
+
+
+Select product_id, customer_name 
+from customers_product
+where EXISTS (SELECT product_id FROM customers_likes 
+			  where customers_product.product_id=27 )  --it not returns any record
+
+
+--2)Update names to "No name" if there is Lary among names in customer_likes table
+
+UPDATE customers_likes
+SET customer_name='No name'
+WHERE EXISTS(SELECT customer_name from customers_likes where customer_name='Lary' )
+
+
+
+--3)Delete records if there is 'Orange' as product_name in customers_like table
+
+DELETE from customers_likes
+where exists(SELECT liked_product from customers_likes where liked_product='Orange');
+
