@@ -1,0 +1,207 @@
+--9. Session SQL Making SQL Queries Joins 25.05.2023
+
+--JOINS
+--1)INNER JOIN: It returns common data from two tables. 
+--2)LEFT JOIN: Returns all data from the first table + common data from second table
+--3)RIGHT JOIN: Returns all data from the second table  + common data from first table
+--4)FULL JOIN: Returns all data from both table 
+--5)SELF JOIN: You will have a single table but you will use it as 2 tables. Using one table and copy of the table for query.
+
+CREATE TABLE my_companies 
+(  
+  company_id CHAR(3), 
+  company_name VARCHAR(20)
+);
+
+INSERT INTO my_companies VALUES(100, 'IBM');
+INSERT INTO my_companies VALUES(101, 'GOOGLE');
+INSERT INTO my_companies VALUES(102, 'MICROSOFT');
+INSERT INTO my_companies VALUES(103, 'APPLE');
+
+SELECT * FROM my_companies;
+
+CREATE TABLE orders 
+(  
+  company_id CHAR(3),   
+  order_id CHAR(3),
+  order_date DATE
+);
+
+INSERT INTO orders VALUES(101, 11, '17-Apr-2020');
+INSERT INTO orders VALUES(102, 22, '18-Apr-2020');
+INSERT INTO orders VALUES(103, 33, '19-Apr-2020');
+INSERT INTO orders VALUES(104, 44, '20-Apr-2020');
+INSERT INTO orders VALUES(105, 55, '21-Apr-2020');
+
+SELECT * FROM orders;
+
+
+--INNER JOIN
+--SELECT company name, order id and order date common companies
+SELECT mc.company_name, o.order_id, o.order_date
+FROM my_companies mc INNER JOIN orders o    --or FROM orders o INNER JOIN my_companies mc
+ON o.company_id=mc.company_id;
+
+
+--2) LEFT JOIN: Returns all data from first table and common data from the second table
+--Get company_name,  order id and order date for the companies in my_companies table
+
+SELECT mc.company_name, o.order_id, o.order_date
+FROM my_companies mc  LEFT JOIN orders o		
+ON mc.company_id=o.company_id;
+
+--3)RIGHT JOIN: Returns all data from second table and common data from the first table
+--Get company_name,  order id and order date for the companies in my_companies table
+SELECT  mc.company_name, o.order_id, o.order_date
+FROM my_companies mc  RIGHT JOIN orders o 
+ON mc.company_id=o.company_id;
+
+--we can find same result for all data from table 2, and common data from two tables:
+SELECT mc.company_name, o.order_id, o.order_date
+FROM orders o  LEFT JOIN my_companies mc		
+ON mc.company_id=o.company_id;
+
+
+
+--FULL JOIN:Returns all data from two tables
+--Get company_name,  order id and order date for the companies in my_companies table
+SELECT mc.company_name,  o.order_id,  o.order_date 
+FROM my_companies mc FULL JOIN orders o
+ON mc.company_id=o.company_id;
+
+--or
+SELECT mc.company_name,  o.order_id,  o.order_date 
+FROM orders o FULL JOIN my_companies mc 
+ON mc.company_id=o.company_id;
+
+
+
+
+--SELF JOIN / INNER JOIN:Returns the common data from the table itself
+
+DROP TABLE workers;
+CREATE TABLE workers 
+(  
+  id CHAR(2), 
+  name VARCHAR(20),
+  title VARCHAR(60),
+  manager_id CHAR(2) 
+);
+
+INSERT INTO workers VALUES(1, 'Ali Can', 'SDET', 2);
+INSERT INTO workers VALUES(2, 'John Walker', 'QA', 3);
+INSERT INTO workers VALUES(3, 'Angie Star', 'QA Lead', 4);
+INSERT INTO workers VALUES(4, 'Amy Sky', 'CEO', 5);
+
+SELECT * FROM workers;
+
+
+--Create a table which displays the manager of employees
+--SELF JOIN: IN POSTGRESQL, we can join the same table's fields with "INNER JOIN" but for some other SQL using databases
+--like ORACLESQL you should combie the fields of original and copy table by using "SELF JOIN"
+
+SELECT w1.name AS "Employee Name", w2.name AS "Manager Name" 
+FROM workers w1
+INNER JOIN workers w2
+ON w1.manager_id=w2.id
+
+
+--HOW TO UPDATE A TABLE
+--ALTER TABLE
+--ALTER TABLE command is used to add, delete or update field of an existing table. 
+--ALTER TABLE command is used to add or delete constraints or update the data type of a field in an existing table
+
+
+--1)How to add a column to an existing table
+SELECT * FROM my_companies
+
+ALTER TABLE my_companies
+ADD company_address TEXT;
+
+
+--2) How to add a field with default value
+ALTER TABLE workers
+ADD worker_address VARCHAR(80) DEFAULT 'Miami, FL, US';
+
+
+--3) How to add multiple fields into a table
+ALTER TABLE workers
+ADD number_of_workers SMALLINT DEFAULT 0, 
+ADD name_of_CEO VARCHAR;
+
+SELECT * FROM workers;
+
+
+--4)How to drop fields from a table
+ALTER TABLE workers
+DROP COLUMN name_of_ceo;
+
+ALTER TABLE my_companies
+RENAME company_address TO worker_address;
+
+SELECT * FROM my_companies;
+
+
+
+--5)How to rename a field in an existing table
+ALTER TABLE workers
+RENAME COLUMN worker_address TO company_profession;
+
+
+--6)How to rename an existing table
+ALTER TABLE workers
+RENAME TO employees;
+
+SELECT * FROM my_companies;
+
+
+--7)How to modify(Add constraint, change data type or change the size of a field)
+--NOTE: Be careful about the existing data in a field when you need to add a constraint for it. 
+
+
+--How to add a constraint into a field
+--Add "NOT NULL" constraint for number_of_workers
+ALTER TABLE employees
+ALTER COLUMN number_of_workers SET NOT NULL;
+
+ALTER TABLE employees
+ALTER COLUMN id SET NOT NULL;
+
+
+SELECT*FROM employees;
+
+
+SELECT*FROM employees;
+
+--How to add UNIQUE constraint
+--Add UNIQUE constraint for id
+ALTER TABLE employees
+ADD CONSTRAINT id_unique UNIQUE(id);
+
+
+--Add UNIQUE constraint for worker_address in the workers table
+SELECT * FROM workers;
+
+--first I deleted column
+ALTER TABLE workers
+DROP worker_address;
+
+--set default null
+ALTER TABLE workers
+ADD worker_address VARCHAR(80) DEFAULT null;
+
+--try to add constraint   --Unique constraint accepts multiple null.
+ALTER TABLE workers
+ADD CONSTRAINT worker_address_unique  UNIQUE(worker_address);   --no repeated data
+--we can see it in the left part, under schemas, under worker table. There is Constraints.
+
+
+--CRUD operations
+--C -->DDL :Data Definition Language : DDL used to create and modify objects (tables, columns, rows)
+--R -->DQL :Data Query Language : It used to read the data (select)
+--U -->DML :Data Manipulation Language : It used to create, update, insert
+--D -->DDL :Data Definition Language : DDL used to create and modify objects (tables, columns, rows) 
+
+
+--***************************************************************************************************
+
