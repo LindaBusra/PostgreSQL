@@ -36,6 +36,45 @@ INSERT INTO workers (worker_address) VALUES ('Miami');
 SELECT * FROM workers;
 
 
+
+
+--How to use Check Constraint
+--A check constraint allows you to specify a condition on each row in a table.
+--A check constraint can be defined in either a SQL CREATE TABLE statement or a SQL ALTER TABLE statement
+
+CREATE TABLE suppliers(
+
+	supplier_id numeric(4),
+	supplier_name varchar(50),
+	CONSTRAINT check_supplier_id
+	CHECK (supplier_id BETWEEN 100 AND 9999)
+);
+
+--This constraint ensures that the supplier_id field contains values between 100 and 9999
+
+INSERT INTO suppliers VALUES(105, 'Emily');
+INSERT INTO suppliers VALUES(10, 'Emily');  --Error, because of condition -->supplier_id BETWEEN 100 AND 9999
+
+SELECT*FROM suppliers;
+DROP TABLE suppliers;
+
+
+
+
+CREATE TABLE suppliers(
+
+	supplier_id numeric(4),
+	supplier_name varchar(50),
+	CONSTRAINT check_supplier_name
+	CHECK (supplier_name=upper(supplier_name))
+);
+
+--This constraint ensures that the supplier_id field contains values between 100 and 9999
+
+INSERT INTO suppliers VALUES(105, 'Emily');  --Error, because of condition -->supplier_name=upper(supplier_name)
+INSERT INTO suppliers VALUES(10, 'EMILY');
+
+
 --****************************************************************************************************************************
 
 
@@ -79,3 +118,10 @@ $$
 
 SELECT volumeOfCone(2,4) AS volumeOfCone;
 SELECT to_char(volumeOfCone(2, 4), '00.0');		--00.0  two decimal in first part, en decimal in second part
+
+
+
+
+
+
+
