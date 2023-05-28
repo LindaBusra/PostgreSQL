@@ -1,0 +1,18 @@
+More About SQL
+SQL is the combination of 4 different languages;
+
+1)Data Control Language (DCL)
+DCL is used to control privileges in Database. To perform any operation in the database, such as
+for creating tables, sequences or views, a user needs privileges. 
+DCL manages users and permissions.
+
+2)Data Definition Language (DDL)
+DDL deals with descriptions of the database scheam (tables, columns, rows) and is used to create and modify
+the structure of database objects
+
+3)Data Manipulation Language (DML): For Create, Update, Delete
+DML deals with the manipulation of data present in the database. For example, insert, update, and delete data.
+
+4)Data Query Language (DQL) : Read
+DQL is used to query the databse for information
+DQL is used to get information that is already stored in database
