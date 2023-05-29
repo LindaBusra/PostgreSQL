@@ -1,0 +1,119 @@
+drop table employees;
+
+CREATE TABLE employees (
+employee_id NUMERIC(9),
+employee_first_name VARCHAR(20),
+employee_last_name VARCHAR(20)
+)
+
+INSERT INTO employees VALUES (14, 'Chris', 'Tae');
+INSERT INTO employees VALUES (11, 'John', 'Walker');
+INSERT INTO employees VALUES (12, 'Amy', 'Star');
+INSERT INTO employees VALUES (13, 'Brad', 'Pitt');
+INSERT INTO employees VALUES (15, 'Chris', 'Way');
+
+SELECT*FROM employees;
+
+
+CREATE TABLE addresses (
+employee_id NUMERIC(9),
+street VARCHAR(20),
+city VARCHAR(20),
+state CHAR(2),
+zipcode char(5)	
+)
+
+delete from addresses;
+INSERT INTO addresses VALUES (11, '32nd Star 1234', 'Miami', 'FL', '33018');
+INSERT INTO addresses VALUES (12, '23rd Rain 567', 'Jacksonville', 'FL', '32256');
+INSERT INTO addresses VALUES (13, '5th Snow 765', 'Hialeah', 'VA', '20121');
+INSERT INTO addresses VALUES (14, '3rd Man 12', 'Weston', 'MI', '12345');
+INSERT INTO addresses VALUES (15, '11th Chris 12', 'St. Johns', 'FL', '32259');
+
+SELECT*FROM addresses;
+
+
+
+--ALIASES
+--How to use aliase for table name
+
+--1) Select employee first name and state, for employee first name use "firstname" as field name
+--and for state use "employee_state" as field name
+
+SELECT employees.employee_first_name as firstname, addresses.state as employee_state
+FROM employees, addresses
+WHERE employees.employee_id= addresses.employee_id;
+
+--or
+SELECT e.employee_first_name as firstname, a.state as employee_state
+FROM employees e, addresses a
+WHERE e.employee_id= a.employee_id;
+
+
+--How to put multiple fields into a single field and use aliase for the field
+--2) Get employee id use "id" as field name, get first name and last name punt them into the same field and use
+--"full name" as field name
+
+SELECT employee_id as id, (employee_first_name||' '|| employee_last_name) as fullname
+FROM employees;
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+--GROUP BY-------------------
+
+
+drop table workers;
+
+CREATE TABLE workers (
+id NUMERIC(9),
+name VARCHAR(50),
+state VARCHAR(50),
+salary NUMERIC(20),
+company VARCHAR(20)
+)
+
+
+
+INSERT INTO workers VALUES (123456789, 'John Walker', 'Florida', 2500, 'IBM');
+INSERT INTO workers VALUES (234567890, 'Brad Pitt', 'Florida', 1500, 'APPLE');
+INSERT INTO workers VALUES (345678901, 'Eddie Murphy', 'Texas', 3000, 'IBM');
+INSERT INTO workers VALUES (456789012, 'Eddie Murphy', 'Virginia', 1000, 'GOOGLE');
+INSERT INTO workers VALUES (567890123, 'Eddie Murphy', 'Texas', 7000, 'MICROSOFT');
+INSERT INTO workers VALUES (456789012, 'Brad Pitt', 'Texas', 1500, 'GOOGLE');
+INSERT INTO workers VALUES (123456710, 'Mark Stone', 'Pennsylvania', 2500, 'IBM');
+
+select*from workers;
+
+--the total number of rows in the table 
+SELECT COUNT(*) FROM workers;
+
+-- return the number of rows in workers where the company is IBM.
+SELECT COUNT(*) FROM workers
+WHERE company='IBM';
+
+--Find the total salary for every employee
+SELECT name, SUM(salary) as total_salary FROM workers
+GROUP BY name
+ORDER BY total_salary DESC; --1)ORDER BY is used after GROUP BY  2)Use aliase as field name
+
+--Find the number of employees per state in descending order by number of employees
+SELECT state, count(name) as number_of_employees
+FROM workers
+GROUP BY state
+ORDER BY number_of_employees DESC;
+
+--Find the number of employees whose salary is more than $2000 per company
+SELECT company, COUNT(name) as "Number of Employees" -->COUNT(*) because it is works for every field.  We can say count(name), count(company), count(id)
+FROM workers
+WHERE salary>2000
+GROUP BY company
+
+--If column name is not matter to count, you can use *
+
+--Find the minimum and maximum salary for every company
+SELECT company, MIN(salary) as "Minimum salary", MAX(salary) as "Maximum salary"
+FROM workers
+GROUP BY company;
