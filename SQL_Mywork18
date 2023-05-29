@@ -1,0 +1,181 @@
+--HAVING CLAUSE
+
+--Find the total salary if it is greater than 2500 for every employee
+SELECT name, SUM(salary) as "Total Salary "
+FROM workers
+GROUP BY name
+HAVING SUM(salary) >2500   --After GROUP BY, WHERE cannot be used, you have to use HAVING to filter
+
+
+--Note:If you uncomment the following code it will give error.
+--because we we can nou use "aggregate functions"  SUM(), AVG(), MAX(), MIN(), COUNT() after WHERE Clauses
+
+--SELECT name, SUM(salary) as "Total Salary "
+--FROM workers
+--WHERE SUM(salary) >2500 
+--GROUP BY name
+
+--Find the number of employees if it is more than 1 per state
+
+SELECT state, COUNT(name) as "Number of Employees"
+FROM workers
+GROUP BY state
+HAVING  COUNT(name)>1;  --1)Having is for filtering for GROUP BY.  2)after HAVING you have to use aggregate function,dont use field names
+
+
+--Find the minimum salary if it is more than 2000 for every company
+SELECT company as "Company", MIN(salary) as "Minimum Salary"
+FROM workers
+GROUP BY company
+HAVING MIN(salary)>2000; 
+
+
+--Find the maximum salary if it is less than 3000 for every state
+SELECT state as "State", MAX(salary) as "Maximum Salary"
+FROM workers
+GROUP BY state
+HAVING MAX(salary)<3000; 
+
+
+-----------------------------------------------------------------------------------------------------
+
+--UNION OPERATOR: --1)it is used to join the result of two queries, 
+	  			  --2)it returns unique records everytime, if there are repeated records it removes repeated ones
+	  			  --3)By using UNION operator we are being able to put different fields into a single field like in the following example
+				  --4)When you put different fields into a single field by using UNION operator, field must have same data type in same size.
+
+--Find the state whose salary is greater than 3000, employee names whose salary is less than 2000 without duplication
+SELECT state AS "State or Employee Name", salary
+FROM workers
+WHERE salary>3000 
+
+UNION 
+
+SELECT name AS "State or Employee Name", salary
+FROM workers
+WHERE salary<2000
+
+
+--Find the state whose salary is greater than 3000, employee names whose salary is less than 2000 with duplication
+SELECT state AS "State or Employee Name", salary
+FROM workers
+WHERE salary>3000 
+
+UNION ALL --Does the same with UNION, just it returns repeated records if there is.
+
+SELECT name AS "State or Employee Name", salary
+FROM workers
+WHERE salary<2000
+
+
+-----------------------------------------------------------------------------------------------------
+
+--INTERSECT operator: 1) Returns common records of 2 queries   2)It returns unique data
+
+
+--Find all common employee names whose salary is greater than 1000, less than 2000 
+SELECT name
+FROM workers
+WHERE salary>1000
+
+INTERSECT   --for common data
+
+SELECT name
+FROM workers
+WHERE salary<2000;
+
+
+
+select*from workers;
+
+
+--Find all common employee names whose salary is greater than 2000 and company name is IBM, APPLE or GOOGLE
+SELECT name
+FROM workers
+WHERE salary>2000
+
+INTERSECT
+
+SELECT name
+FROM workers
+WHERE company IN('IBM', 'APPLE', 'GOOGLE'); 
+
+
+-----------------------------------------------------------------------------------------------------
+
+--EXCEPT Operator:It returns unique records
+--Find the employee names whose salary is less than 3000 and not working in GOOGLE
+--Asil cozum bu
+SELECT name
+FROM workers
+WHERE salary<3000
+
+EXCEPT   --MINUS operator
+
+SELECT name
+FROM workers
+WHERE company='GOOGLE';
+
+--bu sekilde neden olmuyor
+SELECT name
+FROM workers
+WHERE salary<3000 AND company<>'GOOGLE'
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+--JOINS : To get data from multiple tables 
+--1)INNER JOIN:Returns common data
+--2)LEFT JOIN:Returns all data from first table    
+--3)RIGHT JOIN:Returns all data from second table  
+--4)RIGHT JOIN:Returns all data from both table  
+--5)SELF JOIN:You will have a single table but you will use it as 2 table (Treal and Tcopy)
+
+
+--1)INNER JOIN:Returns common data
+
+
+
+CREATE TABLE orders (
+order_id NUMERIC(9),
+company_id NUMERIC(9),
+order_date DATE
+);
+
+INSERT INTO orders VALUES (11, 101,'17-Apr-2020');
+INSERT INTO orders VALUES (22, 102,'18-Apr-2020');
+INSERT INTO orders VALUES (33, 103,'19-Apr-2020');
+INSERT INTO orders VALUES (44, 104,'20-Apr-2020');
+INSERT INTO orders VALUES (55, 105,'21-Apr-2020');
+
+CREATE TABLE companies (
+company_id NUMERIC(9),
+company VARCHAR(20)
+
+);
+
+INSERT INTO companies VALUES (100, 'IBM');
+INSERT INTO companies VALUES (101, 'GOOGLE');
+INSERT INTO companies VALUES (102, 'MICROSOFT');
+INSERT INTO companies VALUES (103, 'APPLE');
+
+select * from companies;
+delete from companies;
+drop table companies;
+
+select * from orders ;
+delete from orders ;
+drop table orders ;
+
+--Select company name, order id, order date for common companies
+SELECT company, order_id, order_date
+FROM companies, orders
+WHERE companies.company_id=orders.company_id;
+
+--or
+
+SELECT c.company, o.order_id,o.order_date
+FROM companies c INNER JOIN orders o
+ON c.company_id=o.company_id;
+
