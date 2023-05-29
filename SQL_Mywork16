@@ -1,0 +1,63 @@
+--ORDER BY : To put the record in ascending or descending order we use ORDER BY
+--			ORDER BY can be used with SELECT Statement
+
+--1) Put the records in ascending order by using number of letters
+SELECT*FROM words
+ORDER BY number_of_letters;   --as default asc order
+
+SELECT*FROM words
+ORDER BY 3   --3 stands for number_of_letters
+
+
+--2) Put the records in descending order by using word
+SELECT*FROM words
+ORDER BY word DESC;
+
+--or
+SELECT*FROM words
+ORDER BY 2 DESC; --2 stands for word
+
+--Note:In ORDER BY, instead of field names, field numbers can be used as well
+
+
+--3) Put the records in descending order by using word, and ascending order by using number of letters
+
+SELECT*FROM words
+ORDER BY word DESC, number_of_letters ASC;
+
+
+CREATE TABLE points(
+name VARCHAR(50),
+point NUMERIC(3)	
+
+)
+
+INSERT INTO points VALUES('Ali', 25);
+INSERT INTO points VALUES('Veli', 37);
+INSERT INTO points VALUES('Kemal', 43);
+INSERT INTO points VALUES('Ali', 36);
+INSERT INTO points VALUES('Ali', 25);
+INSERT INTO points VALUES('Veli', 29);
+INSERT INTO points VALUES('Ali', 45);
+INSERT INTO points VALUES('Veli', 11);
+INSERT INTO points VALUES('Ali', 125);
+
+--the total number of rows in the table 
+SELECT COUNT(*) FROM points;
+
+
+--3) Put the records in descending order by using name field, and ascending order by using points fields
+
+SELECT*FROM points
+ORDER BY name DESC, point ASC;
+
+SELECT*FROM points
+ORDER BY point ASC, name DESC;
+
+--4)Find the total of points for all records
+SELECT sum(point) as total_point FROM points;
+
+
+--ALIASES, GROUP BY, HAVING, ALTER TABLE
+
+
