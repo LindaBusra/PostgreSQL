@@ -1,0 +1,230 @@
+CREATE TABLE orders (
+order_id NUMERIC(9),
+company_id NUMERIC(9),
+order_date DATE
+);
+
+INSERT INTO orders VALUES (11, 101,'17-Apr-2020');
+INSERT INTO orders VALUES (22, 102,'18-Apr-2020');
+INSERT INTO orders VALUES (33, 103,'19-Apr-2020');
+INSERT INTO orders VALUES (44, 104,'20-Apr-2020');
+INSERT INTO orders VALUES (55, 105,'21-Apr-2020');
+
+CREATE TABLE companies (
+company_id NUMERIC(9),
+company VARCHAR(20)
+
+);
+
+INSERT INTO companies VALUES (100, 'IBM');
+INSERT INTO companies VALUES (101, 'GOOGLE');
+INSERT INTO companies VALUES (102, 'MICROSOFT');
+INSERT INTO companies VALUES (103, 'APPLE');
+
+
+
+--LEFT JOIN
+
+--Get order id, order name for the companies in my_companies table
+SELECT c.company, o.order_id,o.order_date
+FROM companies c LEFT JOIN orders o  -->we are getting the data from left table
+ON c.company_id=o.company_id;
+
+
+--RIGHT JOIN
+
+--Get order id, order name for the companies in orders table
+--1.way
+SELECT c.company, o.order_id,o.order_date
+FROM companies c RIGHT JOIN orders o  -->we are getting the data from right table
+ON c.company_id=o.company_id;
+
+--2.way
+SELECT c.company, o.order_id,o.order_date
+FROM orders o LEFT JOIN companies c  -->we are getting the data from left table
+ON c.company_id=o.company_id;
+
+--FULL JOIN
+--Get order id and order name for every company
+SELECT c.company, o.order_id,o.order_date
+FROM companies c FULL JOIN orders o  -->we are getting the data from two tables
+ON c.company_id=o.company_id;
+
+
+--SELF JOIN :We have a table, copy it. table(real) and table(copy)
+
+
+CREATE TABLE workers (
+id NUMERIC(2),	
+name VARCHAR(20),
+title VARCHAR(60),
+manager_id NUMERIC(2)
+
+);
+
+INSERT INTO workers VALUES (1, 'Ali Can', 'SDET', 2);
+INSERT INTO workers VALUES (2, 'John Walker', 'QA', 3);
+INSERT INTO workers VALUES (3, 'Angie Star', 'QA Lead', 4);
+INSERT INTO workers VALUES (4, 'Amy Sky', 'CEO', 5);
+
+select * from workers;
+delete from workers;
+drop table workers;
+
+--Create a table which displays the manager of employees
+SELECT m1.name AS "Employee Name", m2.name AS "Manager Name"
+FROM workers m1 INNER JOIN workers m2
+ON m1.manager_id = m2.id;
+
+
+---------------------------------------------------------------------------------
+
+
+CREATE TABLE my_companies (
+company_id NUMERIC(9),
+company_name VARCHAR(20)
+);
+
+INSERT INTO my_companies VALUES (100, 'IBM');
+INSERT INTO my_companies VALUES (101, 'GOOGLE');
+INSERT INTO my_companies VALUES (102, 'MICROSOFT');
+INSERT INTO my_companies VALUES (103, 'APPLE');
+
+SELECT * FROM my_companies ;
+
+
+--ALTER TABLE
+--We can add a column to an existing table
+ALTER TABLE my_companies
+ADD company_address VARCHAR(80);
+
+UPDATE my_companies
+SET company_address='Austin Texas'
+WHERE company_id=100;
+
+--How to add a field with default value
+ALTER TABLE my_companies
+ADD company_profession VARCHAR(20) DEFAULT 'IT';
+
+
+--How to add multiple fields into a table
+ALTER TABLE my_companies
+ADD company_ceo VARCHAR(50),
+ADD number_workers NUMERIC(5) DEFAULT 0;
+
+
+--How to drop a fields from a table
+ALTER TABLE my_companies
+DROP COLUMN company_ceo;
+
+--How to rename a filed/column
+ALTER TABLE my_companies
+RENAME COLUMN company_profession TO company_industry ;
+
+--How to rename a table
+ALTER TABLE my_companies
+RENAME TO our_companies;
+
+SELECT * FROM our_companies ;
+
+--How to modify a field (add constraints, change data type, change the size) a fiels
+ALTER TABLE our_companies
+ALTER COLUMN number_workers TYPE NUMERIC(5) NOT NULL;  --ALTER COLUMN,MODIFY does not work here !!!
+
+
+ALTER TABLE our_companies
+ALTER COLUMN number_workers 
+SET NOT NULL;
+
+--How to change data type
+
+--Make all data in company_adress field null
+--Note:To change data type of a field, all data in the field must be null. Otherwise SQL does not let you to change data type
+UPDATE our_companies
+SET company_address = NULL;
+
+ALTER TABLE our_companies
+ALTER COLUMN company_address TYPE CHAR(20); 
+
+--How to change size of data type 
+ALTER TABLE our_companies
+ALTER COLUMN company_address TYPE CHAR(50); 
+
+--If you want to change size new size must be greater than the greatest size of existing data
+ALTER TABLE our_companies
+ALTER COLUMN company_industry TYPE VARCHAR(10); 
+
+drop table workers;
+drop table our_companies;
+
+
+
+--bUNDAN SONRASINA BAKMADIM, FUNCTIONLARI NALATIYOR-->1:50  7. Session SQL 6
+https://lms.techproeducation.com/mod/book/view.php?id=2747&chapterid=7505
+
+--How to create a function in SQL 
+
+--We create functions in SQL to do some tasks faster. Like calculating CPA..
+--We create functions to do SELECT, INSERT, DELETE, UPDATE tasks faster
+
+--IN JAVA some methods may not return any value but in SQL all functions must return data.
+--If something like function does not return data, it is called "Procedure".
+
+--Create a function to add 2 numbers
+CREATE OR REPLACE FUNCTION addf(a NUMBER, b NUMBER) RETURN NUMBER IS
+BEGIN
+	RETURN a+b;
+END;
+--1.Way to call a function
+SELECT addf(2,3) from DUAL;
+
+
+
+
+
+
+drop table employees;
+CREATE TABLE employees
+(
+  id CHAR(9),
+  name VARCHAR(50),
+  state VARCHAR(50),
+  salary SMALLINT,
+  company VARCHAR(20)
+);
+INSERT INTO employees VALUES(123456789, 'John Walker', 'Florida', 2500, 'IBM');
+INSERT INTO employees VALUES(234567890, 'Brad Pitt', 'Florida', 3500, 'APPLE');
+INSERT INTO employees VALUES(234567890, 'Brad Pitt', 'Florida', 4000, 'APPLE');
+INSERT INTO employees VALUES(345678901, 'Eddie Murphy', 'Texas', 3000, 'IBM');
+INSERT INTO employees VALUES(456789012, 'Eddie Murphy', 'Virginia', 1000, 'GOOGLE');
+INSERT INTO employees VALUES(567890123, 'Eddie Murphy', 'Texas', 7000, 'MICROSOFT');
+INSERT INTO employees VALUES(456789012, 'Brad Pitt', 'Texas', 1500, 'GOOGLE');
+INSERT INTO employees VALUES(123456710, 'Mark Stone', 'Pennsylvania', 2500, 'IBM');
+INSERT INTO employees VALUES(456789012, 'Brad Pitt', 'Texas', 1400, 'GOOGLE');
+
+SELECT state AS "State or Employee", salary
+FROM employees
+WHERE salary>3000
+UNION 
+SELECT NAME AS "State or Employee", salary
+FROM employees
+WHERE salary<2000;
+
+
+SELECT state AS "State or Employee", salary
+FROM employees
+WHERE salary>3000
+UNION ALL
+SELECT NAME AS "State or Employee", salary
+FROM employees
+WHERE salary<2000;
+
+
+
+
+
+
+
+
+
+https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-alter-table/
