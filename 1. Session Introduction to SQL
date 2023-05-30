@@ -19,7 +19,7 @@
     3-Database: When I want to buy something, I should be able to send some request to database.
     do we have these shoes in our database? Check all sizes. Application interact always with database.
 
-    Amazon has own database in cloud. As user you have limitation about data you can see. It is for security.
+    Amazon has own database in cloud.. As user you have limitation about data you can see. It is for security.
 
     User Interface  -------> Database
                API  -------> Database
