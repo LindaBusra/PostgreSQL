@@ -1,0 +1,119 @@
+
+--Date 30.10.2022
+
+--How to create a table
+DROP TABLE students;
+
+CREATE TABLE students(
+
+	student_id CHAR(5) PRIMARY KEY, 
+    student_name VARCHAR,
+	e_mail_address VARCHAR NOT NULL,
+	student_age NUMERIC(2) CHECK(student_age>0),
+	phone_number CHAR(10) UNIQUE
+	
+)
+
+SELECT * FROM students;
+
+
+
+--How to insert data in to a table
+INSERT INTO students VALUES ('11111', 'Tom Hanks', 'th@gmail.com', 15, '1234567890' );
+INSERT INTO students VALUES ('11112', 'Brad Pitt', 'bp@gmail.com', 22, '2345678901' );
+INSERT INTO students VALUES ('113', 'Tom Hanks', 'th@gmail.com', 12, '3456789012' );
+
+--how to insert data into a table for specific fields
+INSERT INTO students(student_id, e_mail_address,phone_number) VALUES ('11114', 'abc@gmail.com', '4567890123');
+
+INSERT INTO students(e_mail_address,phone_number,student_id) VALUES('xyz@gmail.com', '5678901234', '11115');
+
+--How to update existing data in a table
+
+--EXAMPLE 1: Change 113 student id to 11113
+UPDATE students 
+SET student_id='11113'
+WHERE student_id='113';
+
+
+--EXAMPLE 1: Change Tom Hanks to Anthony Quinn
+
+UPDATE students 
+SET student_name='Anthony Quinn'
+WHERE student_name='Tom Hanks';
+
+
+
+--How to see table
+
+SELECT*FROM students;
+
+--EXAMPLE 1: Change bp@gmail.com to null-->it gives error
+--Following code gives error because e-mail adress field has NOT NULL Constraint
+-- UPDATE students 
+-- SET e_mail_address=null
+-- WHERE e_mail_address='bp@gmail.com';
+
+
+--EXAMPLE 4: Update all students ages to the maximum age
+
+UPDATE students 
+SET student_age= (SELECT MAX(student_age) FROM students)
+
+--Create parents table with the parent_id, parent name, student_id, parent_adress, parent_dob fields
+
+
+CREATE TABLE parents(
+	
+   parent_id CHAR(5) PRIMARY KEY, 
+   parent_name TEXT,
+   student_id CHAR(5),
+   parent_adress TEXT,
+   parent_dob DATE
+	
+)
+
+
+DROP table parents;
+SELECT * FROM parents;
+
+--EXAMPLE 6: Insert 4 records into the parents table
+INSERT INTO parents VALUES('21111', 'Mark Hanks', '11111', 'Miami, FL', '1994-10-23');
+INSERT INTO parents VALUES('21112', 'Angie Pitt', '11112', 'New York, USA', '1987-2-13');
+INSERT INTO parents VALUES('21113', 'John Walker', '11113', 'Berlin, Germany', '1975-12-5');
+INSERT INTO parents VALUES('21114', 'Mary Star', '11114', 'Istanbul, Turkey', '1975-12-1');
+
+
+
+--EXAMPLE 7: Change all date of births to the minimum date of birth
+UPDATE parents
+SET parent_dob = (SELECT MIN(parent_dob) FROM parents);
+
+
+
+--I will created Foreign key between parents and pupils
+
+CREATE TABLE pupils(
+	
+	student_id CHAR(5) PRIMARY KEY,
+	pupil_name VARCHAR,
+	email_address VARCHAR NOT NULL,
+	pupil_age NUMERIC(2) CHECK(pupil_age>0),
+	phone_number CHAR(10) UNIQUE,
+	CONSTRAINT student_id_fk FOREIGN KEY(student_id) REFERENCES parents(parent_id)
+	
+)
+
+SELECT * FROM pupils;
+
+
+
+
+
+
+
+
+
+
+
+
