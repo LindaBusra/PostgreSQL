@@ -1,0 +1,461 @@
+
+--Create workers table whose fields are worker_id, worker_name, worker_salary.
+--worker_id will have primary key with the name worker_id_pk
+--Insert 4 records into the workers table
+--See the table on the console
+
+
+
+CREATE TABLE workers (
+	
+worker_id SMALLINT, 
+worker_name VARCHAR(50),
+worker_salary SMALLINT,
+	
+CONSTRAINT worker_id_pk PRIMARY KEY(worker_id)  --worker_id_pk, is name	
+)
+
+INSERT INTO workers VALUES(101, 'Ali Can', 12000);
+INSERT INTO workers VALUES(102, 'Veli Han', 2000);
+INSERT INTO workers VALUES(103, 'Ayse Kan', 7000);
+INSERT INTO workers VALUES(104, 'Angie Ocean', 12000);
+
+SELECT * FROM workers;
+DROP TABLE workers;
+
+
+--Increase the salary of Veli Han to 20 percent less than the highest salary
+
+UPDATE workers 
+SET worker_salary=(SELECT MAX(worker_salary)*1.2 FROM workers)
+WHERE worker_id=102;
+
+
+
+--Decrease the salary of Ali Can to 30 percent more than the lowest salary
+
+UPDATE workers 
+SET worker_salary = (SELECT MIN(worker_salary)*0.7 FROM workers)
+WHERE worker_id=101;
+
+
+
+
+--Increase the salaries by 1000 if the salaries are less then the average salary
+UPDATE workers 
+SET worker_salary = worker_salary+1000 
+Where worker_salary < (SELECT AVG(worker_salary) FROM workers);
+
+SELECT * FROM workers;
+
+
+--Make the salaries equal to the average salary if the salaries are less then the average salary
+UPDATE workers 
+SET worker_salary = (SELECT AVG(worker_salary) FROM workers)
+Where worker_salary < (SELECT AVG(worker_salary) FROM workers);
+
+SELECT * FROM workers;
+
+
+--**************************************************************************************************
+
+--IS NULL CONDITION
+
+
+CREATE TABLE people
+(
+ssn INT,
+name VARCHAR(50),
+address VARCHAR(80)
+);
+
+INSERT INTO people VALUES(123456789, 'Mark Star', 'Florida');
+INSERT INTO people VALUES(234567890, 'Angie Way', 'Virginia');
+INSERT INTO people VALUES(345678901, 'Maryy Tien', 'New Jersey');
+INSERT INTO people(ssn, address) VALUES(456789012, 'Michigan');
+INSERT INTO people(ssn, address) VALUES(567890123, 'California');
+INSERT INTO people(ssn, name) VALUES(567890123, 'California');
+
+SELECT * FROM people;
+DROP TABLE people;
+
+
+--Change null names to "Name will be inserted later"
+UPDATE people 
+SET name = 'Name will be inserted later'
+WHERE name IS NULL;   --Do not use '=NULL' 
+
+
+
+--Change null addresses to "Address will be inserted later"
+UPDATE people 
+SET address = 'Address will be inserted later'
+WHERE address IS NULL;   
+
+SELECT * FROM people;
+
+
+
+--HOW TO DELETE RECORD FROM A TABLE
+
+----Delete records which SSN number is 234567890
+DELETE FROM people
+WHERE ssn=234567890;
+
+--Delete records which do not have name
+DELETE FROM people
+WHERE name = 'Name will be inserted later';
+
+
+
+--Delete all records
+--Delete command deletes just records, it does not destroy the table.
+DELETE FROM people
+
+
+--Delete all records whose name is null or address is null
+DELETE FROM people
+WHERE name IS NULL OR address IS NULL;
+
+
+SELECT * FROM people;
+
+--Delete all records whose SSN is greater than 123456789 and less than 345678901
+
+DELETE FROM people
+WHERE ssn>123456789 AND ssn<345678901;
+
+
+
+--Delete all records whose name is not null
+DELETE FROM people
+WHERE name IS NOT NULL;
+
+
+
+
+--TRUNCATE command removes all records every time
+--What are the differences between TRUNCATE and DELETE?
+--1)In DELETE FROM, you can use WHERE Clause to filter data, but in TRUNCATE you can not.
+--2)If you remove records by using DELETE FROM, the records can be rolled back, but if
+--you remove records by using TRUNCATE the records can not be rolled back.
+
+
+TRUNCATE TABLE people;
+
+--How to remove table from schema?
+DROP TABLE people;
+DROP TABLE workers;
+
+--DQL: Data Query Language-->It is language for reading data. We will use "SELECT"
+
+SELECT * FROM people;
+
+
+CREATE TABLE workers
+(
+    id SMALLINT,
+    name VARCHAR(50),
+    salary SMALLINT,
+    CONSTRAINT id_pk PRIMARY KEY(id)
+);
+
+
+INSERT INTO workers VALUES(10001, 'Ali Can', 12000);
+INSERT INTO workers VALUES(10002, 'Veli Han', 2000);
+INSERT INTO workers VALUES(10003, 'Mary Star', 7000);
+INSERT INTO workers VALUES(10004, 'Angie Ocean', 8500);
+INSERT INTO workers VALUES(10005, 'John Doe', 8500);
+
+
+--How to select all records;
+SELECT * FROM workers;
+
+--How to get spesific field from a table
+SELECT name
+FROM workers;
+
+--how to get spesific multiple fields from a table
+SELECT name, salary
+FROM workers;
+
+--how to get spesific record from a table
+SELECT * FROM workers
+WHERE id =10001;
+
+
+--how to get multiple spesific record from a table
+SELECT * FROM workers
+WHERE id <10003;
+
+
+--Get records whose salary is 2000 or 7000 or 12000
+
+--1.way
+SELECT *
+FROM workers
+WHERE salary=2000 OR salary=7000 OR salary=12000;
+
+
+--2.way
+SELECT *
+FROM workers
+WHERE salary IN(2000,7000,12000);  --Is used for repeated OR
+
+
+--How to select spesific cell
+SELECT name
+FROM workers
+WHERE id=10002;
+
+
+
+--Interview Question: How to select record whose salary is the highest
+SELECT * FROM workers
+WHERE salary = (SELECT MAX(salary) FROM workers)
+
+
+
+--Interview Question: How to select worker name whose salary is the lowest
+SELECT name FROM workers
+WHERE salary = (SELECT MIN(salary) FROM workers)
+
+
+--Interview Question: How to select records whose salary is the lowest and the highest
+--1.way
+SELECT *
+FROM workers
+WHERE salary =(SELECT MIN(salary) FROM workers) OR salary = (SELECT MAX(salary) FROM workers);
+
+
+--2.way
+SELECT *
+FROM workers
+WHERE salary IN ((SELECT MIN(salary) FROM workers),  (SELECT MAX(salary) FROM workers));
+
+
+
+--Select max salary
+--By using 'AS' you can put temporary field names for your table on the console.
+SELECT MAX(salary) AS maximum_salary
+FROM workers;
+
+
+--Select min salary
+
+SELECT MAX(salary) AS minimum_salary
+FROM workers;
+
+
+--Select average salary
+
+SELECT AVG(salary) AS average_salary
+FROM workers;
+
+
+--Select number of workers
+SELECT COUNT(id) AS number_of_workers
+FROM workers;
+
+
+--Find the sum of the salaries
+SELECT SUM(salary) AS total_salary
+FROM workers;
+
+
+--The Best Interview Question: Select the second highest salary
+SELECT MAX(salary) FROM workers
+WHERE salary<(SELECT MAX(salary) FROM workers)
+
+
+--The Best Interview Question: Select the second lowest salary
+SELECT MIN(salary) AS second_min
+FROM workers
+WHERE salary > (SELECT MIN(salary) FROM workers);
+------------------------------------------------------------------------------------------------------------
+
+--02.11.2022
+ 
+--3) Select the third highest salary from workers table
+
+SELECT MAX(salary) AS third_max
+FROM workers
+WHERE salary < (SELECT MAX(salary) AS second_max
+               FROM workers
+               WHERE salary <(SELECT MAX(salary) FROM workers));
+
+
+
+--4) Select the third lowest salary from workers table
+
+SELECT MIN(salary) AS third_min
+FROM workers
+WHERE salary > (SELECT MIN(salary) AS second_min
+			FROM workers
+			WHERE salary > (SELECT MIN(salary) FROM workers));
+
+
+
+--5) Interview Question: Select all data about the worker whose salary is the second highest
+
+
+SELECT *
+FROM workers
+WHERE salary = (SELECT MAX(salary) AS maximum_salary
+FROM workers
+WHERE salary< (SELECT MAX(salary) FROM workers));
+
+
+--2nd way:
+SELECT *
+FROM workers
+ORDER BY salary DESC
+OFFSET 1 ROW
+FETCH NEXT 2 ROW ONLY;
+
+--OR
+SELECT*FROM workers
+ORDER BY salary DESC
+OFFSET 1 ROW
+LIMIT 2;
+
+
+
+----6) Interview Question: Select all data about the worker whose salary is the second lowest
+
+--1.WAY
+SELECT *
+FROM workers
+ORDER BY salary ASC
+OFFSET 1 ROW
+FETCH NEXT 1 ROW ONLY;
+
+--2.WAY-->This works for all SQLs
+SELECT *
+FROM workers
+WHERE salary = (SELECT MIN(salary)
+                FROM workers
+                WHERE salary > (SELECT MIN(salary) FROM workers));
+				
+SELECT * FROM workers;
+
+
+--7) Challenge: Select all data whose salary is the third highest salary from workers table
+--1st Way:
+SELECT *
+FROM workers
+WHERE salary = (SELECT MAX(salary)
+                FROM workers
+                WHERE salary < (SELECT MAX(salary)
+                FROM workers
+                WHERE salary < (SELECT MAX(salary)
+                                FROM workers)));
+--2nd Way:
+SELECT *
+FROM workers
+ORDER BY salary DESC
+OFFSET 2 ROW
+FETCH NEXT 1 ROW ONLY;
+
+
+CREATE TABLE customers_products
+(
+  product_id INT,
+  customer_name VARCHAR(50),
+  product_name VARCHAR(50)
+);
+INSERT INTO customers_products VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_products VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_products VALUES (20, 'John', 'Apple');
+INSERT INTO customers_products VALUES (30, 'Amy', 'Palm');
+INSERT INTO customers_products VALUES (20, 'Mark', 'Apple');
+INSERT INTO customers_products VALUES (10, 'Adem', 'Orange');
+INSERT INTO customers_products VALUES (40, 'John', 'Apricot');
+INSERT INTO customers_products VALUES (20, 'Eddie', 'Apple');
+ 
+SELECT*FROM customers_products;
+
+
+--8) Select records whose product name is Orange or Apple or Palm
+
+--1.way
+SELECT * from customers_products
+WHERE product_name = 'Orange' OR product_name ='Apple' OR product_name ='Palm';
+
+--2.way
+SELECT * FROM customers_products
+WHERE product_name	IN('Orange', 'Apple','Palm');
+
+
+--NOT INN Con dition
+-- != means <> in SQL
+
+
+--9) Select records whose product name is not Orange or Apple or Palm
+SELECT * FROM customers_products
+WHERE product_name	NOT IN('Orange', 'Apple','Palm');
+
+
+--Between Condition
+
+--10) Select records whose product id is less than or equal to 30 and greater than or equal to 20
+
+--1.way : Not recommended because of the repetition
+SELECT * FROM customers_products
+WHERE product_id<=30 AND product_id>=20;
+
+--2.way: Recommended
+SELECT * FROM customers_products
+WHERE product_id BETWEEN 20 and 30;   --20 and 30 are inclusive (Use smaller first)
+
+
+--NOT BETWEEN Condition
+--11) Select records whose product id is less than 20, greater than 25
+
+--1.way
+SELECT * FROM customers_products
+WHERE product_id<20 OR product_id>25;
+
+--2.way
+SELECT * FROM customers_products
+WHERE product_id not between 20 and 25;  --in NOT BETWEEN 20 and 25 are exclusive
+
+
+
+
+
+
+--EXISTS Condition: EXISTS Condition is used with Subqueries.
+--                  If the subquery returns any record Outer Query will be executed.
+--                  If the subquery does not return any record Outer Query will not be executed.
+--                  It can be used in SELECT, INSERT, UPDATE and DELETE commands.
+
+
+
+DROP TABLE customers_likes;
+
+
+CREATE TABLE customers_likes
+(
+  product_id CHAR(10),
+  customer_name VARCHAR(50),
+  liked_product VARCHAR(50)
+);
+
+INSERT INTO customers_likes VALUES (10, 'Mark', 'Orange');
+INSERT INTO customers_likes VALUES (50, 'Mark', 'Pineapple');
+INSERT INTO customers_likes VALUES (60, 'John', 'Avocado');
+INSERT INTO customers_likes VALUES (30, 'Lary', 'Cherries');
+INSERT INTO customers_likes VALUES (20, 'Mark', 'Apple');
+INSERT INTO customers_likes VALUES (10, 'Adem', 'Orange');
+INSERT INTO customers_likes VALUES (40, 'John', 'Apricot');
+INSERT INTO customers_likes VALUES (20, 'Eddie', 'Apple');
+
+SELECT * FROM customers_likes;
+
+
+--12) Update names to "No name" if there is Lary among names in customers_likes table
+
+UPDATE customers_likes
+SET customer_name='No name'  
+WHERE EXISTS (SELECT customer_name FROM customers_likes WHERE customer_name = 'Lary');
