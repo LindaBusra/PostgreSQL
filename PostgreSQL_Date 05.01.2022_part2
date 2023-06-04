@@ -1,0 +1,209 @@
+drop table words;
+
+CREATE TABLE words
+(
+word_id SMALLINT UNIQUE,
+word varchar(50) NOT NULL,
+number_of_letters SMALLINT
+);
+
+INSERT INTO words VALUES (1001, 'hot', 3);
+INSERT INTO words VALUES (1002, 'hat', 3);
+INSERT INTO words VALUES (1003, 'hit', 3);
+INSERT INTO words VALUES (1004, 'hbt', 3);
+INSERT INTO words VALUES (1008, 'hct', 3);
+INSERT INTO words VALUES (1005, 'adem', 4);
+INSERT INTO words VALUES (1006, 'selena', 6);
+INSERT INTO words VALUES (1007, 'yusuf', 5);
+SELECT * FROM words;
+
+
+--Select the words whose first character is 's' or 'a' or 'y'
+select word from words
+where regexp_like (word, '^s|^a|^y');
+
+select word
+from words
+where regexp_like (word, '^[say]');
+
+SELECT word
+FROM words
+WHERE word ~ '^[say](.*)';  --it is optional to use this * part
+
+
+
+--Select the words last character is m or a or f
+select word
+from words
+where regexp_like (word, 'm$|a$|f$');
+
+select word
+from words
+where regexp_like (word, '[maf]$');
+
+
+
+--select words whose first character is s and last character is a
+select word
+from words
+where regexp_like (word, '^[s].*[a]$')	
+--your option for initial is 's'. []  . it says one single character 
+-- * there may be zero or multiple character
+-- [a]$ is last character
+
+
+--Select words which have 'a' in any position
+select word
+from words
+where regexp_like (word, 'a')   -- 'a' is same with %a% with LIKE
+  
+--select words which have characters from 'd' to 't' at the beginning followed by any character then 'l'  
+select word
+from words
+where regexp_like (word, '^[d-t].[l]') ;   --after first caharcter we have a caharcter, and after that we have l
+  
+  
+--select words which have characters from 'y' to 'f' at the beginning followed by any character then 's'   
+select word
+from words
+where regexp_like (word, '^[f-y].[s]') ;  --to get yusuf
+
+-- '.' in REGEXP_LIKE is same with '_' in like
+
+
+--select words which have characters from d to t at the beginning folowed by any 2 characters and then e
+select word
+from words
+where regexp_like (word, '^[d-t]..[e]') ;
+
+--select words which do not have 'h' in any position
+--NOT LIKE condition
+
+select word
+from words
+where word NOT LIKE '%h%' ;
+
+
+select word
+from words
+where not regexp_like (word, 'h') ;
+
+
+--select words which do not and with 't' and do not end with f
+--NOT LIKE condition
+select word
+from words
+where word not like '%t' and word not like '%f'
+
+
+--select words which start with any character, not followed by 'a', not followed by 'e'
+--NOT LIKE condition
+select word
+from words
+where word not like '_a%' and word not like '_e%';
+
+
+-- ORDER BY Function: To put the recordsin ascengind or descending order we use Order BY
+-- ORDER BY statement can be use with SELECT clauses
+
+
+--put the records in ascending order by using number_of_letters
+select*
+from words
+order by number_of_letters;
+
+--put the records in descending order by using number_of_letters
+select*
+from words
+order by number_of_letters DESC;
+
+select*
+from words
+order by word DESC; --DESC is not optional, if you do not type DESC, the output
+--will be in ascending order
+
+
+--Note: In Order By, instead of field names, we can use field numbers as well
+SELECT*FROM words
+ORDER BY 3 ASC;    --number_of_letter -->3.column
+
+SELECT*FROM words
+ORDER BY 2 DESC;
+
+--length of word -  uzunluk
+SELECT 	word, 	LENGTH(word) len
+FROM 	words
+ORDER BY len ASC;
+
+
+------------------------------------------------------------------
+
+
+CREATE TABLE points(
+name VARCHAR(50),
+point SMALLINT
+);
+
+INSERT INTO points VALUES ('Ali', 85);
+INSERT INTO points VALUES ('Tom', 65);
+INSERT INTO points VALUES ('Veli', 55);
+INSERT INTO points VALUES ('Kemal', 75);
+INSERT INTO points VALUES ('Eddie', 95);
+INSERT INTO points VALUES ('Brad', 56);
+INSERT INTO points VALUES ('Cynthia', 67);
+
+--Put the points of the students in descending order
+SELECT * FROM points
+ORDER BY point desc ;
+
+--Put the name column in order
+SELECT name FROM points
+ORDER BY name;
+
+--------------------------------
+
+
+DROP TABLE employees;
+
+
+CREATE TABLE employees(
+employee_id NUMERIC,
+employee_first_name varchar(20),
+employee_last_name varchar(20)
+)
+
+INSERT INTO employees VALUES(14, 'Chris', 'Tae');
+INSERT INTO employees VALUES(11, 'John', 'Walker');
+INSERT INTO employees VALUES(12, 'Amy', 'Star');
+INSERT INTO employees VALUES(13, 'Brad', 'Pitt');
+INSERT INTO employees VALUES(15, 'Chris', 'Way');
+
+
+
+CREATE TABLE addresses
+(
+employee_id numeric,
+street varchar(20),
+city varchar(20),
+state char(2),
+zipcode char(5)
+);
+
+INSERT INTO addresses VALUES(11, '32nd Star 1234', 'Miami', 'FL', '33018');
+INSERT INTO addresses VALUES(12, '23rd Rain 567', 'Jacksonville', 'FL', '32256');
+INSERT INTO addresses VALUES(13, '5th Snow 765', 'Hialeah', 'VA', '20121');
+INSERT INTO addresses VALUES(14, '3rd Man 12', 'Weston', 'MI', '12345');
+INSERT INTO addresses VALUES(15, '11th Chris 12', 'St. Johns', 'FL', '32259');
+
+
+select*from addresses;
+select*from employees;
+
+
+
+
+
+
+
+
+
