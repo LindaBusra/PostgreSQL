@@ -1,0 +1,130 @@
+drop table workers
+
+CREATE TABLE workers
+(
+  id CHAR(2),
+  name VARCHAR(20),
+  title VARCHAR(60),
+  manager_id CHAR(2)
+);
+INSERT INTO workers VALUES(1, 'Ali Can', 'SDET', 2);
+INSERT INTO workers VALUES(2, 'John Walker', 'QA', 3);
+INSERT INTO workers VALUES(3, 'Angie Star', 'QA Lead', 4);
+INSERT INTO workers VALUES(4, 'Amy Sky', 'CEO', 5);
+
+SELECT * FROM workers;
+drop table workers;
+drop table employees;
+
+--ALTER TABLE
+--The alter Table statement is used to add, delete or modify columns in an existing table
+--The alter Table statement is also used to add and drop constraints in  an existing table
+
+
+--1)We can add a column to an existing table
+
+alter table workers add company_industry varchar (20);
+
+--2)How to add field with default value:
+alter table workers add worker_address varchar (80) default 'Miami, FL, USA';
+
+--2)How to add multiple fields into a table:
+alter table workers 
+add number_of_worker char(5) default 0,
+add name_of_ceo varchar(20) default 'John';
+
+--5)How to rename a field/column
+alter table workers 
+rename column  company_industry to company_profession;
+
+select * from workers;
+
+--6)How to rename a table
+alter table workers rename to employees;
+select * from employees;
+
+--7)How to modify a field(add constraint, change data types, change size...)
+
+--Note:When you add a constraint into a field be careful  about existing data.
+
+--a)How to add constraint
+--a1)Add not null constraints to number of workers field
+
+ALTER TABLE employees
+ALTER COLUMN number_of_worker SET NOT NULL;
+
+--a2)Add "UNIQUE" constraints to company_profession field
+ALTER TABLE employees
+ADD CONSTRAINT company_profession UNIQUE (company_profession);  --"UNIQUE" constraints accept multiply null
+
+--a2)Add "UNIQUE" constraints to worker_address field.
+ALTER TABLE employees
+ADD CONSTRAINT worker_address UNIQUE (worker_address); -- "UNIQUE" constraints can not accept dublicated values.
+
+select*from employees;
+
+--b)How to change data size of a field
+--b1)Change the data type of company_profession to char(5)
+alter table employees 
+alter column company_profession TYPE char(5);
+
+--Note:Whe you modify a field, new size must be greater than or equal to the maximum value of existing size
+
+--b2)Change the data type of worker_address to char(5)
+alter table employees 
+alter column worker_address TYPE char(5);	--ERROR:  value too long for type character(5)
+--Can not decrease the column length because some values are greater than char(5).
+
+--b3)Change the data type of worker_address to char(30)
+alter table employees
+alter column worker_address TYPE char(30);
+
+--how to delete column
+alter table workers 
+drop name_of_ceo;
+
+
+------------------------------------------------------------------------------------
+
+
+--How to write Function
+--A function is created to do some tasks faster and easier. (Averaging...)
+--A function can be created for CRUD operations. 
+--In SQL every functions returns a data as return type.
+--Operations that do not return data as return type are called 'Procedure'
+
+
+CREATE OR REPLACE FUNCTION addf(x NUMERIC, y NUMERIC)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+RETURN x+y;
+END
+$$
+SELECT * FROM addf(3,4) as "Addition";
+
+
+--Write function that calculate the volme of the cone.
+CREATE OR REPLACE FUNCTION volume_of_cone(r NUMERIC, h NUMERIC)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+RETURN 3.14*r*r*h*1/3;
+END
+$$
+
+SELECT * FROM volume_of_cone(3,6) AS "Volume";
+SELECT to_char(volume_of_cone(3,6), '00.00');	--format the result
+
+
+
+
+--SQL is used to comminicate with a database
+--It is used to make queries on databse
+--With these queries we can do CRUD operations
+
+
