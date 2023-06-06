@@ -1,0 +1,304 @@
+select*from countries;
+delete from countries;
+drop table countries;
+
+create table countries(
+COUNTRY_ID CHAR(2),
+COUNTRY_NAME VARCHAR(40),
+REGION_ID NUMERIC
+)
+
+
+Insert into countries values ('AR','Argentina',2);
+Insert into countries values ('AU','Australia',3);
+Insert into countries values ('BE','Belgium',1);
+Insert into countries values ('BR','Brazil',2);
+Insert into countries values ('CA','Canada',2);
+Insert into countries values ('CH','Switzerland',1);
+Insert into countries values ('CN','China',3);
+Insert into countries values ('DE','Germany',1);
+Insert into countries values ('DK','Denmark',1);
+Insert into countries values ('EG','Egypt',4);
+Insert into countries values ('FR','France',1);
+Insert into countries values ('IL','Israel',4);
+Insert into countries values ('IN','India',3);
+Insert into countries values ('IT','Italy',1);
+Insert into countries values ('JP','Japan',3);
+Insert into countries values ('KW','Kuwait',4);
+Insert into countries values ('ML','Malaysia',3);
+Insert into countries values ('MX','Mexico',2);
+Insert into countries values ('NG','Nigeria',4);
+Insert into countries values ('NL','Netherlands',1);
+Insert into countries values ('SG','Singapore',3);
+Insert into countries values ('UK','United Kingdom',1);
+Insert into countries values ('US','United States of America',2);
+Insert into countries values ('ZM','Zambia',4);
+Insert into countries values ('ZW','Zimbabwe',4);
+
+--Example:Select the country_id and country_names from countries table
+SELECT * FROM countries;
+
+--Example:Select the country_ids and country names whose region id's are greater than 2.
+SELECT country_id, country_name FROM countries WHERE region_id>2;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+drop table companies;
+select*from companies;
+
+create table companies(company_id NUMERIC(5), 
+					   company_name varchar(50), 
+					   number_of_employees NUMERIC(5)); 
+
+insert into companies values(100, 'IBM', 12000);
+insert into companies values(101, 'GOOGLE', 18000);
+insert into companies values(102, 'MICROSOFT', 10000);
+insert into companies values(103, 'APPLE', 21000);
+
+
+--Select the company  whose number_of_employees is the greatest from companies table.
+SELECT*FROM companies WHERE number_of_employees=( SELECT MAX(number_of_employees) from companies);
+
+
+--Find the company names and number of employees  whose number of employees is less then the average number of employees
+SELECT AVG(number_of_employees) from companies; --average: 15250
+SELECT company_name, number_of_employees FROM companies WHERE number_of_employees<(SELECT AVG(number_of_employees) from companies);
+
+
+--Update the number_of_employees to 16000 if the number_of_employees is less than average number_of_employees (average: 15250)
+UPDATE companies
+SET number_of_employees=16000
+WHERE number_of_employees<(SELECT AVG(number_of_employees) FROM companies);
+
+
+--1.Example: Update the number of employees to 9999 if the company name is IBM by using prepared statement
+UPDATE companies
+SET number_of_employees=9999
+WHERE company_name ='IBM';
+
+
+--Find the company and number_of_employees whose number is the second highest from the companies table.
+
+--1.st way
+SELECT number_of_employees, company_name  
+FROM companies 
+WHERE number_of_employees=(SELECT MAX(number_of_employees) FROM companies WHERE number_of_employees <
+						  (SELECT MAX(number_of_employees) FROM companies));
+			  
+						  
+						  
+--2.st way: By using OFFSET and FETCH NEXT
+SELECT number_of_employees, company_name  
+FROM companies 
+ORDER BY number_of_employees DESC
+OFFSET 1 ROW
+FETCH NEXT 1 ROW ONLY;
+
+--3.rd way
+SELECT number_of_employees, company_name  
+FROM companies 
+ORDER BY number_of_employees DESC
+OFFSET 1 ROW
+LIMIT 1;
+
+
+
+--Find the company and number_of_employees whose number is the third highest from the companies table.
+--1.st way
+SELECT number_of_employees, company_name  
+FROM companies 
+ORDER BY number_of_employees DESC
+OFFSET 2 ROW
+FETCH NEXT 1 ROW ONLY;
+
+--3.rd way
+SELECT number_of_employees, company_name  
+FROM companies 
+ORDER BY number_of_employees DESC
+OFFSET 2 ROW
+LIMIT 1;
+
+
+
+--Update the number of employees to 10000 if the number of employees is less then the average number of employees.
+
+UPDATE companies
+SET number_of_employees=10000
+WHERE number_of_employees<(SELECT AVG(number_of_employees) FROM companies);  //I need subquery
+
+
+--Example : Update the company names to *****  if the number of employees is the highest.
+
+UPDATE companies
+SET company_name= '*****'
+WHERE number_of_employees=(SELECT MAX(number_of_employees) FROM companies);  
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+create table workers(id CHAR(5), name varchar(50), salary NUMERIC(5)); 
+insert into workers values(10001, 'Ali Can', 12000);
+insert into workers values(10002, 'Veli Han', 2000);
+insert into workers values(10003, 'Mary Star', 7000);
+insert into workers values(10004, 'Angie Ocean', 8500);
+
+select*from workers;
+
+drop table workers;
+
+
+
+-- //Select the worker whose salary is the lowest from workers table
+SELECT*FROM workers WHERE salary=( SELECT MIN(salary) from workers);
+SELECT MIN(salary) FROM workers;
+
+
+
+--//Find the name and the salary of the worker whose salary is the second highest from the workers table
+--1st way:
+SELECT name, salary FROM workers
+ORDER BY salary DESC
+OFFSET 1 ROW
+FETCH NEXT 1 ROW ONLY;
+
+--2nd way:
+SELECT name, salary FROM workers ORDER BY salary DESC LIMIT 1 OFFSET 1
+
+
+--3rd way:
+SELECT*FROM workers WHERE salary=( SELECT MIN(salary) from employees);
+
+--1.step
+SELECT name , salary FROM workers WHERE salary<(SELECT MAX(salary) from workers);
+
+--2.step
+SELECT name, salary FROM workers 
+WHERE salary =(SELECT MAX(salary) 
+			   FROM workers 
+			   WHERE salary<(SELECT MAX(salary) 
+							 FROM workers)); 
+
+
+
+
+--//Example 2 - Find the name and the salary of the worker whose salary is the third highest from the workers table
+SELECT name, salary FROM workers ORDER BY salary DESC OFFSET 2 ROW FETCH NEXT 1 ROW ONLY;
+
+
+--------------------------------------------------------------------------------------------
+
+--1.Example: Create a function which uses 2 parameters and returns the sum of the parameters.
+
+CREATE FUNCTION additionF(x NUMERIC, y NUMERIC)
+RETURNS NUMERIC 
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+RETURN x+y;
+
+END
+$$
+
+SELECT*FROM additionF(2,3) AS "Addition";
+
+--------------------------------------------------------------------------------------------
+
+
+CREATE TABLE bolumler (
+bolum_id NUMERIC(3),
+bolum_isim VARCHAR(30),	
+personel_isim VARCHAR(50),
+maas NUMERIC(7)
+	
+)
+
+INSERT INTO bolumler VALUES(10,'Muhasebe','Saly Emily', 8000);
+INSERT INTO bolumler VALUES(20, 'IT','Tom Brown', 10000);
+INSERT INTO bolumler VALUES(30, 'Bakim Onarim','Angeli July', 8500);
+INSERT INTO bolumler VALUES(10, 'Muhasebe','Elin Helen', 12000);
+INSERT INTO bolumler VALUES(20, 'IT','Vidar Tonsberg', 10500);
+INSERT INTO bolumler VALUES(30, 'Bakim Onarim','Alie Nilsen', 9500);
+INSERT INTO bolumler VALUES(40, 'Satis','Vibecce Jakobsen', 11500);
+INSERT INTO bolumler VALUES(40, 'Satis','Tamara Ole', 13000);
+
+SELECT*FROM bolumler;
+DROP TABLE bolumler;
+
+
+
+--Bolumler tablosundan tum kayitlari listeleyiniz.
+SELECT* FROM bolumler;
+
+--Muhasebe ve Bakim Onarim bolumlerinde calisan personelin isimlerini ve maaslarini maas ters sirali listeleyiniz
+SELECT personel_isim, maas FROM bolumler
+WHERE bolum_id IN(10,30)
+ORDER BY maas DESC;
+
+--Tum bolumlerde calisan personel isimlerini bolum isimlerini ve maaslarini, bolum ve maas sirali listeleyiniz
+--Not: Calisani olmasa bile bolum ismi gosterilmelidir
+SELECT personel_isim, bolum_isim, maas FROM bolumler
+ORDER BY bolum_isim, maas;
+
+
+--Maasi en yuksek 4 kisinin bolumunu, adini ve maasini listeleyiniz.
+SELECT bolum_isim, personel_isim, maas FROM bolumler
+ORDER BY maas DESC
+LIMIT 4;
+
+
+--------------------------------------------------------------------------------------------
+
+
+CREATE TABLE isciler (
+id NUMERIC(3),
+birim VARCHAR(30),	
+maas NUMERIC(7)
+	
+)
+
+drop table isciler;
+select*from isciler;
+
+INSERT INTO bolumler VALUES(10,'Muhasebe', 8000);
+INSERT INTO bolumler VALUES(20, 'IT', 10000);
+INSERT INTO bolumler VALUES(30, 'Bakim Onarim', 8500);
+INSERT INTO bolumler VALUES(10, 'Muhasebe', 12000);
+INSERT INTO bolumler VALUES(20, 'IT', 10500);
+INSERT INTO bolumler VALUES(30, 'Bakim Onarim', 9500);
+INSERT INTO bolumler VALUES(40, 'Satis', 11500);
+INSERT INTO bolumler VALUES(40, 'Satis', 13000);
+
+ALTER TABLE isciler RENAME TO calisanlar;
+
+select*from calisanlar;
+drop table calisanlar;
+
+drop table employee;
+select*from employee;
+
+
+
+
+drop table markalar
+
+select*from markalar;
+
+
+
+
+
+
+
+
