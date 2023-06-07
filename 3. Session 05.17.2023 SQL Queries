@@ -215,7 +215,7 @@ SELECT * FROM workers
 WHERE worker_salary=(SELECT MAX(worker_salary) FROM workers)
 
 
---To find the records which have the highest salary
+--To find the records which are less then highest salary
 SELECT * FROM workers
 WHERE worker_salary<(SELECT MAX(worker_salary) FROM workers)
 
